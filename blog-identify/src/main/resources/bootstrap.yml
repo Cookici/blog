@@ -1,0 +1,35 @@
+spring:
+
+  application:
+    name: blog-identify
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:9002
+      config:
+        server-addr: 192.168.29.200:9002
+        namespace: 7d945f45-a01f-4d38-9346-70cf479d761c
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: mysql.yaml
+            group: common
+            refresh: true
+
+          - data-id: redis.yaml
+            group: common
+            refresh: true
+
+          - data-id: mybatis-plus.yaml
+            group: common
+            refresh: true
+
+
+
+  main:
+    allow-bean-definition-overriding: true
+
+
+
+

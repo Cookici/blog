@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 /**
  * <p>
  *  服务实现类
@@ -28,7 +33,10 @@ public class BlogUsersServiceImpl extends ServiceImpl<BlogUsersMapper, BlogUsers
         return blogUsersMapper.selectOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
     }
 
-
+    @Override
+    public Integer addBlogUsers(BlogUsers blogUsers) {
+        return blogUsersMapper.insert(blogUsers);
+    }
 
 
 }

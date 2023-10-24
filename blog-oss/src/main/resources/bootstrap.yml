@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: blog-oss
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:8848
+      config:
+        server-addr: 192.168.29.200:8848
+        namespace: 53aabc91-e478-4a84-a2b9-b50a740b370f
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: oss.yaml
+            group: common
+            refresh: true
+
+

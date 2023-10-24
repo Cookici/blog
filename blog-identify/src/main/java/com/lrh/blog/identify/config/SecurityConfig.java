@@ -72,8 +72,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String[] URL_WHITELIST = {
             "/login",
             "/logout",
-            "/blog/identify/captcha",
-            "/favicon.ico"
+            "/captcha",
+            "/blog/identify/register",
+            "/favicon.ico",
     };
 
     @Bean

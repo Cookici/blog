@@ -2,31 +2,9 @@ server:
   port: 7000
 
 
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/blog
-    username: root
-    password: lrh,903.520hhhh
-    type: com.alibaba.druid.pool.DruidDataSource
-  redis:
-    port: 6379
-    password: 20030706
-    database: 1
-    host: 192.168.29.200
-    jedis:
-      pool:
-        max-active: 20
-        max-idle: 10
-        min-idle: 2
-  main:
-    allow-bean-definition-overriding: true
 
-mybatis-plus:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  global-config:
-    db-config:
-      logic-delete-value: 0
-      logic-not-delete-value: 1
+
+
+
 
 

@@ -35,7 +35,7 @@ public class UserDetailServiceImpl implements UserDetailService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         BlogUsers blogUsers = blogUsersService.selectUserByUsername(username);
         if (blogUsers == null) {
-            throw new UsernameNotFoundException("没有此用户");
+            throw new UsernameNotFoundException("用户名或密码错误");
         }
         List<GrantedAuthority> list = AuthorityUtils.commaSeparatedStringToAuthorityList(blogUsers.getUserAuthority());
         return new CustomUser(blogUsers,list);

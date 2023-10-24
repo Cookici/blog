@@ -18,10 +18,12 @@ public enum ResultCodeEnum {
      * SUCCESS 请求成功
      * FAIL 请求失败
      * LOGIN_ERROR 登录失败
+     * NO_RIGHT 没有权限
      */
-    SUCCESS(200,"成功"),
-    FAIL(201, "失败"),
-    LOGIN_ERROR(208,"登陆失败");
+    SUCCESS(200,"请求成功"),
+    FAIL(400, "请求失败"),
+    NO_LOGIN(401,"请先登录"),
+    NO_RIGHT(403,"没有权限");
 
 
     private final Integer code;

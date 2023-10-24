@@ -42,7 +42,6 @@ public class CaptchaFilter extends OncePerRequestFilter {
             try {
                 validate(httpServletRequest);
             } catch (CaptchaException e) {
-
                 /*
                   交给认证失败处理器
                  */
@@ -59,7 +58,7 @@ public class CaptchaFilter extends OncePerRequestFilter {
     /**
      * 校验验证码逻辑
      */
-    private void validate(HttpServletRequest httpServletRequest) throws IOException {
+    private void validate(HttpServletRequest httpServletRequest) {
 
         String code = httpServletRequest.getParameter("code");
         String key = httpServletRequest.getParameter("userKey");

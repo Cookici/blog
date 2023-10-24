@@ -76,7 +76,7 @@ public class BlogUsers implements Serializable {
     /**
      * 用户手机号
      */
-    private Integer userTelephoneNumber;
+    private String userTelephoneNumber;
 
     /**
      * 用户昵称
