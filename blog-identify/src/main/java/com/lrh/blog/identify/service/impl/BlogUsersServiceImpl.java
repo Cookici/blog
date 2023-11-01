@@ -1,18 +1,15 @@
 package com.lrh.blog.identify.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.lrh.blog.identify.entity.BlogUsers;
+import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.identify.mapper.BlogUsersMapper;
 import com.lrh.blog.identify.service.BlogUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * <p>
@@ -36,6 +33,11 @@ public class BlogUsersServiceImpl extends ServiceImpl<BlogUsersMapper, BlogUsers
     @Override
     public Integer addBlogUsers(BlogUsers blogUsers) {
         return blogUsersMapper.insert(blogUsers);
+    }
+
+    @Override
+    public List<BlogUsers> selectUsersByIds(List<Long> ids) {
+        return baseMapper.selectBatchIds(ids);
     }
 
 

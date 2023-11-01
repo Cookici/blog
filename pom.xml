@@ -14,6 +14,7 @@
         <module>blog-common</module>
         <module>blog-identify</module>
         <module>blog-oss</module>
+        <module>blog-article</module>
     </modules>
 
     <properties>

@@ -1,9 +1,9 @@
 package com.lrh.blog.identify.service;
 
-import com.lrh.blog.identify.entity.BlogUsers;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lrh.blog.common.entity.BlogUsers;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * <p>
@@ -24,4 +24,5 @@ public interface BlogUsersService extends IService<BlogUsers> {
 
     Integer addBlogUsers(BlogUsers blogUsers);
 
+    List<BlogUsers> selectUsersByIds(List<Long> ids);
 }

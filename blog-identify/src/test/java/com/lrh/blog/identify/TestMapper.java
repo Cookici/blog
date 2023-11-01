@@ -1,6 +1,6 @@
 package com.lrh.blog.identify;
 
-import com.lrh.blog.identify.entity.BlogUsers;
+import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.identify.service.BlogUsersService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

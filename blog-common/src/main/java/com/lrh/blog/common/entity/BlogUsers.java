@@ -1,15 +1,15 @@
-package com.lrh.blog.identify.entity;
+package com.lrh.blog.common.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.time.LocalDate;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.time.LocalDateTime;
-import java.io.Serializable;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -92,6 +92,7 @@ public class BlogUsers implements Serializable {
      * 权限
      */
     private String userAuthority;
+
 
 
 }

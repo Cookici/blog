@@ -1,0 +1,27 @@
+spring:
+
+  application:
+    name: blog-article
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:9002
+      config:
+        server-addr: 192.168.29.200:9002
+        namespace: 50b84ef3-a5d3-4c4c-ae65-861c2c6c7050
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: mysql.yaml
+            group: common
+            refresh: true
+
+          - data-id: mybatis-plus.yaml
+            group: common
+            refresh: true
+
+
+
+  main:
+    allow-bean-definition-overriding: true

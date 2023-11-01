@@ -1,13 +1,11 @@
 package com.lrh.blog.identify.filter;
 
-import cn.hutool.core.util.StrUtil;
-import com.lrh.blog.identify.entity.BlogUsers;
-import com.lrh.blog.identify.service.BlogUsersService;
+
 import com.lrh.blog.identify.service.UserDetailService;
-import com.lrh.blog.identify.service.impl.UserDetailServiceImpl;
 import com.lrh.blog.identify.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +18,8 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.IOException;;
+import java.util.Arrays;
 
 /**
  * @ProjectName: Blog
@@ -32,6 +31,7 @@ import java.io.IOException;
  * @Date: 2023/10/22 13:20
  */
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends BasicAuthenticationFilter  {
 
@@ -41,6 +41,14 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter  {
     @Autowired
     private UserDetailService userDetailService;
 
+    private static final String[] URL_WHITELIST = {
+            "/login",
+            "/logout",
+            "/captcha",
+            "/blog/identify/register",
+            "/favicon.ico",
+    };
+
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         super(authenticationManager);
@@ -49,9 +57,9 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter  {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String jwt = request.getHeader(jwtUtils.getHeader());
-        // 这里如果没有jwt，继续往后走，因为后面还有鉴权管理器等去判断是否拥有身份凭证，所以是可以放行的
-        // 没有jwt相当于匿名访问，若有一些接口是需要权限的，则不能访问这些接口
-        if (StrUtil.isBlankOrUndefined(jwt)) {
+        log.error("jwtAuthenticationFilter---->{}",request.getRequestURI());
+        boolean judge =  Arrays.asList(URL_WHITELIST).contains(request.getRequestURI());
+        if (judge) {
             chain.doFilter(request,response);
             return;
         }

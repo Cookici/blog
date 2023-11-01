@@ -1,7 +1,7 @@
 package com.lrh.blog.identify.service.impl;
 
 
-import com.lrh.blog.identify.entity.BlogUsers;
+import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.identify.entity.CustomUser;
 import com.lrh.blog.identify.service.BlogUsersService;
 import com.lrh.blog.identify.service.UserDetailService;

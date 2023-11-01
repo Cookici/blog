@@ -1,5 +1,6 @@
 package com.lrh.blog.identify.entity;
 
+import com.lrh.blog.common.entity.BlogUsers;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -16,7 +17,7 @@ import java.util.Collection;
 
 public class CustomUser extends User {
 
-    private  BlogUsers blogUsers;
+    private BlogUsers blogUsers;
 
     public CustomUser(BlogUsers blogUsers, Collection<? extends GrantedAuthority> authorities) {
         super(blogUsers.getUserName(), blogUsers.getUserPassword(), authorities);
