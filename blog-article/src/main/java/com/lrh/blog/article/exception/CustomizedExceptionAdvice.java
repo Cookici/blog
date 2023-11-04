@@ -27,16 +27,17 @@ public class CustomizedExceptionAdvice {
 
     @ExceptionHandler(FeignException.class)
     public void handlerFeignClientException(FeignException exception, HttpServletResponse response) throws IOException {
-        if(exception instanceof FeignException.FeignClientException){
-            System.out.println("having coming");
-            response.setContentType("application/json;charset=UTF-8");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setStatus(401);
-            ServletOutputStream outputStream = response.getOutputStream();
-            Result<Object> result = Result.fail().code(ResultCodeEnum.NO_LOGIN.getCode()).message(ResultCodeEnum.NO_LOGIN.getMessage() + "," + exception.getMessage());
-            outputStream.write(JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8));
-            outputStream.flush();
-            outputStream.close();
+        if (exception instanceof FeignException.FeignClientException) {
+            if (exception.status() == 401) {
+                response.setContentType("application/json;charset=UTF-8");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setStatus(401);
+                ServletOutputStream outputStream = response.getOutputStream();
+                Result<Object> result = Result.fail().code(ResultCodeEnum.NO_LOGIN.getCode()).message(ResultCodeEnum.NO_LOGIN.getMessage() + "," + exception.getMessage());
+                outputStream.write(JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8));
+                outputStream.flush();
+                outputStream.close();
+            }
         }
 
     }

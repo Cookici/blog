@@ -40,5 +40,10 @@ public class BlogUsersServiceImpl extends ServiceImpl<BlogUsersMapper, BlogUsers
         return baseMapper.selectBatchIds(ids);
     }
 
+    @Override
+    public int updateUrlById(Long id, String photoUrl) {
+        return blogUsersMapper.updateUrlById(id,photoUrl);
+    }
+
 
 }

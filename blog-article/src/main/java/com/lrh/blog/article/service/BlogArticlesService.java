@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lrh.blog.common.entity.BlogArticles;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -16,4 +18,6 @@ import com.lrh.blog.common.entity.BlogArticles;
 public interface BlogArticlesService extends IService<BlogArticles> {
 
     IPage<BlogArticles> getAllBlogArticles(Page<BlogArticles> page);
+
+    List<BlogArticles> getAllBlogArticlesById(Long id);
 }

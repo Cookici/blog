@@ -37,7 +37,7 @@ public class BlogArticlesController {
 
     @GetMapping("/getAll/{index}")
     public Result<Map<String, Object>> getAllBlogArticles(@PathVariable Integer index) {
-        Page<BlogArticles> page = new Page<>(index, 2);
+        Page<BlogArticles> page = new Page<>(index, 5);
         IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(page);
         List<BlogArticles> records = allBlogArticles.getRecords();
         List<Long> ids = new ArrayList<>();
@@ -49,6 +49,9 @@ public class BlogArticlesController {
         Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(idsFormat);
 
         List<BlogUsers> articlesForUsers = byIds.getData();
+        for (BlogUsers articlesForUser : articlesForUsers) {
+            articlesForUser.setUserPassword(null);
+        }
 
 
         for (BlogArticles article : records) {
@@ -67,6 +70,28 @@ public class BlogArticlesController {
 
         return Result.ok(map);
     }
+
+
+    @GetMapping("/getUserDetail/{id}")
+    public Result<Map<String, Object>> getUserByArticleId(@PathVariable("id") Long id) {
+
+        List<BlogArticles> allBlogArticlesById = blogArticlesService.getAllBlogArticlesById(id);
+        Long likes = 0L;
+        Long views = 0L;
+        for (BlogArticles blogArticles : allBlogArticlesById) {
+            likes += blogArticles.getArticleLikeCount();
+            views += blogArticles.getArticleViews();
+        }
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("articleList", allBlogArticlesById);
+        map.put("articleNumber", allBlogArticlesById.size());
+        map.put("like", likes);
+        map.put("views", views);
+
+        return Result.ok(map);
+    }
+
 
 }
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -47,10 +48,10 @@ public class OssController {
     @Value("${spring.cloud.alicloud.secret-key}")
     private String secretKey;
 
-    @GetMapping("/oss/policy")
-    public Result<Map<String, String>> policy(@RequestParam("username") String username) {
+    @PostMapping("/oss/policy/{username}")
+    public Result<Map<String, String>> policy(HttpServletResponse response, @PathVariable("username") String username) {
         // 填写Host地址，格式为https://bucketname.endpoint。
-        String host = "https://" + bucket + "." + endpoint;
+        String host = "https://" + bucket;
         // 设置上传到OSS文件的前缀，可置空此项。置空后，文件将上传至Bucket的根目录下
         String dir = username + "/";
         // 创建ossClient实例。

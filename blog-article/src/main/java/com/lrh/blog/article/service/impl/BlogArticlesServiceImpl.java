@@ -1,5 +1,6 @@
 package com.lrh.blog.article.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.mapper.BlogArticlesMapper;
@@ -7,6 +8,8 @@ import com.lrh.blog.article.service.BlogArticlesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lrh.blog.common.entity.BlogArticles;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * <p>
@@ -21,6 +24,11 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
 
     @Override
     public IPage<BlogArticles> getAllBlogArticles(Page<BlogArticles> page) {
-        return baseMapper.selectPage(page,null);
+        return baseMapper.selectPage(page,new LambdaQueryWrapper<BlogArticles>().orderByDesc(BlogArticles::getArticleDate));
+    }
+
+    @Override
+    public List<BlogArticles> getAllBlogArticlesById(Long id) {
+        return baseMapper.selectList(new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getUserId,id));
     }
 }

@@ -25,4 +25,6 @@ public interface BlogUsersService extends IService<BlogUsers> {
     Integer addBlogUsers(BlogUsers blogUsers);
 
     List<BlogUsers> selectUsersByIds(List<Long> ids);
+
+    int updateUrlById(Long id, String photoUrl);
 }
