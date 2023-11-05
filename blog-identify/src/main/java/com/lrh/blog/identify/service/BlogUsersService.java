@@ -1,6 +1,7 @@
 package com.lrh.blog.identify.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lrh.blog.common.entity.BlogPhotos;
 import com.lrh.blog.common.entity.BlogUsers;
 
 import java.util.List;
@@ -27,4 +28,6 @@ public interface BlogUsersService extends IService<BlogUsers> {
     List<BlogUsers> selectUsersByIds(List<Long> ids);
 
     int updateUrlById(Long id, String photoUrl);
+
+    int updateBackPhoto(BlogPhotos blogPhotos);
 }

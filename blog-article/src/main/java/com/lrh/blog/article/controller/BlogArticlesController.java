@@ -8,13 +8,14 @@ import com.lrh.blog.article.service.BlogUsersServer;
 import com.lrh.blog.common.entity.BlogArticles;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.utils.DecodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import sun.util.resources.LocaleData;
 
-import org.springframework.web.bind.annotation.RestController;
-
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -90,6 +91,15 @@ public class BlogArticlesController {
         map.put("views", views);
 
         return Result.ok(map);
+    }
+
+
+    @PostMapping("/create/{userId}")
+    public Result<Integer> createArticle(@PathVariable("userId") Long userId,@RequestBody String message) throws UnsupportedEncodingException {
+        System.out.println(message);
+        String[] strings = DecodeUtils.decodeMessage(message);
+        Integer i = blogArticlesService.insertArticle(userId, strings[0], strings[1]);
+        return Result.ok(i);
     }
 
 

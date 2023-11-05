@@ -28,7 +28,7 @@ public class CodeGenerator {
         // 2、全局配置
         // 全局配置
         GlobalConfig gc = new GlobalConfig();
-        gc.setOutputDir("D:\\JavaProject\\Blog\\blog-article"+"/src/main/java");
+        gc.setOutputDir("D:\\JavaProject\\Blog\\blog-identify"+"/src/main/java");
 
         gc.setServiceName("%sService");	//去掉Service接口的首字母I
         gc.setAuthor("lrh");
@@ -37,17 +37,17 @@ public class CodeGenerator {
 
         // 3、数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/blog");
+        dsc.setUrl("jdbc:mysql://192.168.29.200:3306/blog");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("lrh,903.520hhhh");
+        dsc.setPassword("root");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 
         // 4、包配置
         PackageConfig pc = new PackageConfig();
         pc.setParent("com.lrh.blog");
-        pc.setModuleName("article"); //模块名
+        pc.setModuleName("identify"); //模块名
         pc.setController("controller");
         pc.setService("service");
         pc.setMapper("mapper");
@@ -56,7 +56,7 @@ public class CodeGenerator {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
 
-        strategy.setInclude("blog_articles");
+        strategy.setInclude("blog_photos");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
 
