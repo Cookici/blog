@@ -66,15 +66,15 @@ public class BlogUsersController {
 
     @PutMapping("/updateUserPhoto")
     public Result<Integer> updateUserPhoto(@RequestBody String message) throws UnsupportedEncodingException {
-        String[] strings = DecodeUtils.decodeMessage(message);
-        int i = blogUsersService.updateUrlById(Long.valueOf(strings[0]), strings[1]);
+        List<String> strings = DecodeUtils.decodeMessage(message);
+        int i = blogUsersService.updateUrlById(Long.valueOf(strings.get(0)), strings.get(1));
         return Result.ok(i);
     }
 
     @PutMapping("/goBackPhoto")
     public Result<Integer> goBackPhoto(@RequestBody String message) throws UnsupportedEncodingException {
-        String[] strings = DecodeUtils.decodeMessage(message);
-        BlogPhotos blogPhotos = new BlogPhotos(null,Long.valueOf(strings[0]),strings[1]);
+        List<String> strings = DecodeUtils.decodeMessage(message);
+        BlogPhotos blogPhotos = new BlogPhotos(null,Long.valueOf(strings.get(0)),strings.get(1));
         int i = blogUsersService.updateBackPhoto(blogPhotos);
         return Result.ok(i);
     }

@@ -7,6 +7,8 @@ import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.utils.DecodeUtils;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -18,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,4 +88,27 @@ public class OssController {
 
         return Result.ok(respMap);
     }
+
+
+    @DeleteMapping("/oss/deleteFile")
+    public Result<Object> deleteFileByFileUrl(@RequestBody String message) {
+        try {
+           List<String> strings = DecodeUtils.decodeMessage(message);
+            String userName = strings.get(0);
+            String url = strings.get(1);
+            int index = url.indexOf(userName);
+            if (index != -1) {
+                String fileName = url.substring(index);
+                System.out.println(fileName);
+                ossClient = new OSSClientBuilder().build(endpoint, accessId, secretKey);
+                ossClient.deleteObject("lrh-blog-project", fileName);
+                return Result.ok().message("删除成功");
+            }
+        } catch (Exception e) {
+            return Result.fail().message("未知错误");
+        }
+        return Result.fail().message("非法操作");
+
+    }
+
 }

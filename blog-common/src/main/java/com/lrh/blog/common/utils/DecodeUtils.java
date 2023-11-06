@@ -3,6 +3,10 @@ package com.lrh.blog.common.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @ProjectName: Blog
@@ -15,23 +19,33 @@ import java.nio.charset.StandardCharsets;
 
 public class DecodeUtils {
 
-    private DecodeUtils(){
+    private DecodeUtils() {
 
     }
 
     /**
-     *  只能解析两个参数的组合
+     * 解析多个参数的组合禁止解析内容中含有等号
+     *
      * @param message
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static String[] decodeMessage(String message) throws UnsupportedEncodingException {
+    public static List<String> decodeMessage(String message) throws UnsupportedEncodingException {
         String decode = URLDecoder.decode(message, String.valueOf(StandardCharsets.UTF_8));
         String string = decode.substring(1, decode.length() - 1);
-        String[] split = string.split("&");
-        String one = split[0].substring(split[0].indexOf("=") + 1);
-        String two = split[1].substring(split[1].indexOf("=") + 1);
-        return new String[]{one,two};
+
+        Pattern pattern = Pattern.compile("([^&=]+)=([^&]+)");
+        Matcher matcher = pattern.matcher(string);
+        List<String> list = new ArrayList<>();
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String value = matcher.group(2);
+            list.add(value);
+            System.out.println("Key:" + key);
+            System.out.println("Value: " + value);
+        }
+
+        return list;
     }
 
 }

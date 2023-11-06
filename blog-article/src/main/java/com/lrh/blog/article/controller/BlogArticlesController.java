@@ -1,6 +1,7 @@
 package com.lrh.blog.article.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.service.BlogArticlesService;
@@ -9,11 +10,14 @@ import com.lrh.blog.common.entity.BlogArticles;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
 import com.lrh.blog.common.utils.DecodeUtils;
+import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import sun.util.resources.LocaleData;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -95,13 +99,21 @@ public class BlogArticlesController {
 
 
     @PostMapping("/create/{userId}")
-    public Result<Integer> createArticle(@PathVariable("userId") Long userId,@RequestBody String message) throws UnsupportedEncodingException {
-        System.out.println(message);
-        String[] strings = DecodeUtils.decodeMessage(message);
-        Integer i = blogArticlesService.insertArticle(userId, strings[0], strings[1]);
+    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo) throws UnsupportedEncodingException {
+        String title = URLDecoder.decode(blogArticlesVo.getTitle(), String.valueOf(StandardCharsets.UTF_8));
+        String content = URLDecoder.decode(blogArticlesVo.getContent(), String.valueOf(StandardCharsets.UTF_8));
+        Integer i = blogArticlesService.insertArticle(userId, title, content);
         return Result.ok(i);
     }
 
+    @PostMapping("/addLike/{articleId}")
+    public Result<Integer> addLike(@PathVariable("articleId") Long articleId) {
+        BlogArticles blogArticles = blogArticlesService.getBaseMapper().selectById(articleId);
+        long articleLikeCount = blogArticles.getArticleLikeCount() + 1;
+        blogArticles.setArticleLikeCount(articleLikeCount);
+        int update = blogArticlesService.getBaseMapper().update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, articleId));
+        return Result.ok(update);
+    }
 
 }
 
