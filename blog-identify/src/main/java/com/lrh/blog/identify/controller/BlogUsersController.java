@@ -1,6 +1,7 @@
 package com.lrh.blog.identify.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lrh.blog.common.entity.BlogPhotos;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -53,6 +55,11 @@ public class BlogUsersController {
     @GetMapping("/get/{username}")
     public Result<BlogUsers> getBlogUser(@PathVariable("username") String username) {
         BlogUsers blogUsers = blogUsersService.selectUserByUsername(username);
+        Duration duration = Duration.between(blogUsers.getUserRegistrationTime(), LocalDateTime.now());
+        System.out.println(duration.toDays());
+        long level = duration.toDays() / 10;
+        blogUsers.setUserLevel(Math.toIntExact(level));
+        blogUsersService.update(blogUsers, new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
         blogUsers.setUserPassword(null);
         return Result.ok(blogUsers);
     }
@@ -74,11 +81,10 @@ public class BlogUsersController {
     @PutMapping("/goBackPhoto")
     public Result<Integer> goBackPhoto(@RequestBody String message) throws UnsupportedEncodingException {
         List<String> strings = DecodeUtils.decodeMessage(message);
-        BlogPhotos blogPhotos = new BlogPhotos(null,Long.valueOf(strings.get(0)),strings.get(1));
+        BlogPhotos blogPhotos = new BlogPhotos(null, Long.valueOf(strings.get(0)), strings.get(1));
         int i = blogUsersService.updateBackPhoto(blogPhotos);
         return Result.ok(i);
     }
-
 
 
 }

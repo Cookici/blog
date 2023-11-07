@@ -15,6 +15,7 @@
         <module>blog-identify</module>
         <module>blog-oss</module>
         <module>blog-article</module>
+        <module>blog-chat</module>
     </modules>
 
     <properties>

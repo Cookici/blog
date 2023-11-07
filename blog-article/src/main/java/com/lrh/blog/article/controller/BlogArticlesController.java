@@ -115,5 +115,15 @@ public class BlogArticlesController {
         return Result.ok(update);
     }
 
+
+    @PostMapping("/addView/{articleId}")
+    public Result<Integer> addView(@PathVariable("articleId") Long articleId){
+        BlogArticles blogArticles = blogArticlesService.getBaseMapper().selectById(articleId);
+        long articleViews = blogArticles.getArticleViews() + 1;
+        blogArticles.setArticleViews(articleViews);
+        int update = blogArticlesService.getBaseMapper().update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, articleId));
+        return Result.ok(update);
+    }
+
 }
 

@@ -1,0 +1,25 @@
+spring:
+
+  application:
+    name: blog-chat
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:9002
+      config:
+        server-addr: 192.168.29.200:9002
+        namespace: 9736e98f-1276-41c8-8804-1d3f7b576815
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: rabbitmq.yml
+            group: common
+            refresh: true
+
+  rabbitmq:
+    host: 192.168.29.125
+    port: 15672
+    virtual-host: /
+    username: admin
+    password: admin

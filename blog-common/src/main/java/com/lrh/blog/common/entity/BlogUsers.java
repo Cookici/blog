@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author lrh
@@ -93,6 +93,9 @@ public class BlogUsers implements Serializable {
      */
     private String userAuthority;
 
-
+    /**
+     * 登录状态
+     */
+    private Integer userStatus;
 
 }
