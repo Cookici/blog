@@ -8,18 +8,10 @@ import com.lrh.blog.article.service.BlogArticlesService;
 import com.lrh.blog.article.service.BlogUsersServer;
 import com.lrh.blog.common.entity.BlogArticles;
 import com.lrh.blog.common.entity.BlogUsers;
-import com.lrh.blog.common.result.Result;
-import com.lrh.blog.common.utils.DecodeUtils;
+import com.lrh.blog.common.result.Result;;
 import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import sun.util.resources.LocaleData;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -47,11 +39,7 @@ public class BlogArticlesController {
         List<BlogArticles> records = allBlogArticles.getRecords();
         List<Long> ids = new ArrayList<>();
         records.forEach(item -> ids.add(item.getUserId()));
-        Long[] idsFormat = new Long[ids.size()];
-        for (int i = 0; i < idsFormat.length; i++) {
-            idsFormat[i] = ids.get(i);
-        }
-        Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(idsFormat);
+        Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(ids);
 
         List<BlogUsers> articlesForUsers = byIds.getData();
         for (BlogUsers articlesForUser : articlesForUsers) {
@@ -99,10 +87,8 @@ public class BlogArticlesController {
 
 
     @PostMapping("/create/{userId}")
-    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo) throws UnsupportedEncodingException {
-        String title = URLDecoder.decode(blogArticlesVo.getTitle(), String.valueOf(StandardCharsets.UTF_8));
-        String content = URLDecoder.decode(blogArticlesVo.getContent(), String.valueOf(StandardCharsets.UTF_8));
-        Integer i = blogArticlesService.insertArticle(userId, title, content);
+    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo){
+        Integer i = blogArticlesService.insertArticle(userId, blogArticlesVo.getTitle(), blogArticlesVo.getContent());
         return Result.ok(i);
     }
 
@@ -117,7 +103,7 @@ public class BlogArticlesController {
 
 
     @PostMapping("/addView/{articleId}")
-    public Result<Integer> addView(@PathVariable("articleId") Long articleId){
+    public Result<Integer> addView(@PathVariable("articleId") Long articleId) {
         BlogArticles blogArticles = blogArticlesService.getBaseMapper().selectById(articleId);
         long articleViews = blogArticles.getArticleViews() + 1;
         blogArticles.setArticleViews(articleViews);

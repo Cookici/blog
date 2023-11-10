@@ -1,7 +1,6 @@
 package com.lrh.blog.chat.utils;
 
-import com.lrh.blog.chat.domain.Message2;
-import org.aspectj.bridge.Message;
+import com.lrh.blog.common.domin.Message2;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

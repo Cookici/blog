@@ -1,6 +1,5 @@
 package com.lrh.blog.identify.filter;
 
-import com.alibaba.fastjson.JSONObject;
 import com.lrh.blog.identify.exception.CaptchaException;
 import com.lrh.blog.identify.handler.LoginFailureHandler;
 import com.lrh.blog.identify.utils.RedisUtils;

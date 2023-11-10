@@ -16,6 +16,7 @@
         <module>blog-oss</module>
         <module>blog-article</module>
         <module>blog-chat</module>
+        <module>blog-chat-handler</module>
     </modules>
 
     <properties>

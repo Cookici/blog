@@ -51,4 +51,19 @@ public interface Type {
      */
     Byte GROUP_MESSAGE_RESPONSE = 7;
 
+    /**
+     * 添加好友
+     */
+    Byte ADD_FRIEND = 8;
+
+    /**
+     * 添加好友回应
+     */
+    Byte ADD_FRIEND_RESPONSE = 9;
+
+    /**
+     * 心跳
+     */
+    Byte HEART_BEAT = 10;
+
 }

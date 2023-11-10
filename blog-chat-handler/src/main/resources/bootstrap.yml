@@ -1,0 +1,26 @@
+spring:
+
+  application:
+    name: blog-chat-handler
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:9002
+      config:
+        server-addr: 192.168.29.200:9002
+        namespace: 4561e9d9-7d02-4e59-99fd-5488ae056fe1
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: redis.yaml
+            group: common
+            refresh: true
+
+          - data-id: mysql.yaml
+            group: common
+            refresh: true
+
+          - data-id: mybatis-plus.yaml
+            group: common
+            refresh: true

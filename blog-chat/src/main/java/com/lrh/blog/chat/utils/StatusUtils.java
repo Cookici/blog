@@ -13,6 +13,7 @@ package com.lrh.blog.chat.utils;
 import com.lrh.blog.chat.domain.User;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
+import lombok.extern.slf4j.Slf4j;
 
 
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 退出后的操作
  */
+@Slf4j
 public class StatusUtils {
 
     /**
@@ -37,20 +39,21 @@ public class StatusUtils {
 
     public static void bindChannel(User user, Channel channel) {
         userIdChannelMap.put(user.getUserId(), channel);
-        System.out.println(user.getUserId() + "上线服务器...");
-        System.out.println(userIdChannelMap);
+        log.info(user.getUserId() + "上线服务器...");
+        log.info("总channel:{}", userIdChannelMap);
         channel.attr(Attributes.STATUS).set(user);
     }
 
 
     /**
-     *  channel.attr(Attributes.STATUS).set(xx)可以设置为null hasLogin然后取出来判断是否为null
+     * channel.attr(Attributes.STATUS).set(xx)可以设置为null hasLogin然后取出来判断是否为null
+     *
      * @param user
      * @param channel
      */
     public static void clearChannel(User user, Channel channel) {
         userIdChannelMap.remove(user.getUserId());
-        System.out.println(user.userId + "已经退出...");
+        log.info(user.userId + "已经退出...");
         channel.attr(Attributes.STATUS).remove();
     }
 
@@ -74,7 +77,7 @@ public class StatusUtils {
      */
     public static void bindChannelGroup(Integer groupId, ChannelGroup channelGroup) {
         groupIdChannelGroupMap.put(groupId, channelGroup);
-        System.out.println(channelGroup);
+       log.info("channelGroup:{}",channelGroup);
     }
 
     public static ChannelGroup getChannelGroup(Integer groupId) {

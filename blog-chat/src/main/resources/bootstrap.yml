@@ -17,9 +17,6 @@ spring:
             group: common
             refresh: true
 
-  rabbitmq:
-    host: 192.168.29.125
-    port: 15672
-    virtual-host: /
-    username: admin
-    password: admin
+          - data-id: redis.yaml
+            group: common
+            refresh: true

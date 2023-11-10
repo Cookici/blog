@@ -23,6 +23,6 @@ import java.util.List;
 public interface BlogUsersServer {
 
     @GetMapping("/blog/identify/getByIds")
-    Result<List<BlogUsers>> getByIds(@RequestParam("ids") Long[] ids);
+    Result<List<BlogUsers>> getByIds(@RequestParam("ids")List<Long> ids);
 
 }
