@@ -62,8 +62,14 @@ public class BlogUsersController {
         return Result.ok(blogUsers);
     }
 
+    @GetMapping("/get")
+    public Result<BlogUsers> getByUserName(@RequestParam String username) {
+        BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName,username));
+        return Result.ok(blogUsers);
+    }
+
     @GetMapping("/getById")
-    public Result<BlogUsers> getUserById(@RequestParam Long id){
+    public Result<BlogUsers> getUserById(@RequestParam Long id) {
         BlogUsers blogUsers = blogUsersService.getById(id);
         return Result.ok(blogUsers);
     }
@@ -96,7 +102,6 @@ public class BlogUsersController {
         int i = blogUsersService.updateBackPhoto(blogPhotos);
         return Result.ok(i);
     }
-
 
 
 }

@@ -15,4 +15,9 @@ import com.lrh.blog.common.vo.BlogUserFriendsVo;
 public interface BlogUserFriendsService extends IService<BlogUserFriends> {
 
     Integer addFriend(BlogUserFriendsVo blogUserFriendsVo);
+
+
+    Integer judgeHaveFriend(Long userId, String friendName);
+
+    Integer rejectApply(BlogUserFriendsVo blogUserFriendsVo);
 }

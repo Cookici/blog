@@ -65,7 +65,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<SocketChanne
                   浏览器请求时，ws://localhost:port/XXX 表示请求的资源
                   核心功能是 将http协议升级为ws协议，保持长连接
                  */
-                .addLast("idleStateHandler", new IdleStateHandler(8, 10, 12))
+                .addLast("idleStateHandler", new IdleStateHandler(30, 30, 60))
                 .addLast("webSocketServerProtocolHandler", new WebSocketServerProtocolHandler("/"))
                 .addLast("baseHandler", webSocketRequestHandler)
                 .addLast("registerHandler", registerHandler)
