@@ -30,4 +30,7 @@ public interface BlogUsersServer {
     @GetMapping("/blog/identify/get")
     public Result<BlogUsers> getByUserName(@RequestParam String username);
 
+    @GetMapping("/blog/identify/getByIds")
+    public Result<List<BlogUsers>> getByIds(@RequestParam("ids") List<Long> ids);
+
 }

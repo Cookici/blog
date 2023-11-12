@@ -10,10 +10,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
 import com.lrh.blog.common.vo.BlogUserFriendsVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +26,7 @@ import java.util.List;
  * @author lrh
  * @since 2023-11-09
  */
+@Slf4j
 @Service
 public class BlogUserFriendsServiceImpl extends ServiceImpl<BlogUserFriendsMapper, BlogUserFriends> implements BlogUserFriendsService {
 
@@ -64,7 +67,7 @@ public class BlogUserFriendsServiceImpl extends ServiceImpl<BlogUserFriendsMappe
     @Transactional
     public Integer judgeHaveFriend(Long userId, String friendName) {
         Result<BlogUsers> blogUser = blogUsersServer.getByUserName(friendName);
-        System.out.println("judge blogUser => " + blogUser.getData());
+        log.info("judge blogUser => " + blogUser.getData());
         Long friendId = blogUser.getData().getUserId();
         Integer byUserIdAndFriendId = blogUserFriendsMapper.getByUserIdAndFriendId(userId, friendId);
         if (byUserIdAndFriendId == 1) {
@@ -77,6 +80,30 @@ public class BlogUserFriendsServiceImpl extends ServiceImpl<BlogUserFriendsMappe
     public Integer rejectApply(BlogUserFriendsVo blogUserFriendsVo) {
         redisUtils.hdel("add" + blogUserFriendsVo.getUserId(), String.valueOf(blogUserFriendsVo.getFriendId()));
         return 1;
+    }
+
+    @Override
+    public List<BlogUsers> getFriendList(Long userId) {
+        List<BlogUserFriends> blogUserFriendsList = baseMapper.selectList(new LambdaQueryWrapper<BlogUserFriends>().eq(BlogUserFriends::getUserId, userId));
+        log.info("blogUserFriendsList: {}", blogUserFriendsList);
+        List<Long> ids = new ArrayList<>();
+        for (BlogUserFriends blogUserFriends : blogUserFriendsList) {
+            ids.add(blogUserFriends.getUserFriendsId());
+        }
+        log.info("friendIds: {}", ids);
+        Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(ids);
+        List<BlogUsers> data = byIds.getData();
+        for (BlogUsers datum : data) {
+            datum.setUserPassword(null);
+            datum.setUserTelephoneNumber(null);
+        }
+        return data;
+    }
+
+    @Override
+    public BlogUsers getFriend(Long friendId) {
+        Result<BlogUsers> userById = blogUsersServer.getUserById(friendId);
+        return userById.getData();
     }
 
 }

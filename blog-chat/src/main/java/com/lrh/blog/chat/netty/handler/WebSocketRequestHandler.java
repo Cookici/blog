@@ -153,6 +153,7 @@ public class WebSocketRequestHandler extends SimpleChannelInboundHandler<WebSock
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         log.info("channelInactive ==> id:{}", ctx.channel().id());
+        StatusUtils.clearChannel(StatusUtils.getUser(ctx.channel()), ctx.channel());
         NettyConfig.group.remove(ctx.channel());
     }
 
