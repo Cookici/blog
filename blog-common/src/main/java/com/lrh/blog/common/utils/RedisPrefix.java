@@ -17,4 +17,6 @@ public interface RedisPrefix {
 
     String SINGLE_CHAT_OFFLINE = "singleOffline";
 
+    String RED_POINT = "redpoint";
+
 }

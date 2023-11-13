@@ -54,6 +54,8 @@ public class BlogUserFriendsController {
     @GetMapping("/getFriend/{friendId}")
     public Result<BlogUsers> getFriendById(@PathVariable("friendId")Long friendId){
         BlogUsers blogUsers = blogUserFriendsService.getFriend(friendId);
+        blogUsers.setUserPassword(null);
+        blogUsers.setUserTelephoneNumber(null);
         return Result.ok(blogUsers);
     }
 
