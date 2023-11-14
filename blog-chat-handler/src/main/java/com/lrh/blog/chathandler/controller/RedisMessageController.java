@@ -11,10 +11,7 @@ import com.lrh.blog.common.vo.BlogUserFriendsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ProjectName: Blog
@@ -53,10 +50,15 @@ public class RedisMessageController {
         List<Object> onLine = redisUtils.lGet(onLineString.toString(), 0, -1);
         List<Object> offLine = redisUtils.lGet(offLineString.toString(), 0, -1);
         onLine.addAll(offLine);
+
         for (Object object : offLine) {
-            redisUtils.lSet(onLineString.toString(), object);
+            Message message = (Message) object;
+            if (Objects.equals(message.getToId(), userId)) {
+                redisUtils.lSet(onLineString.toString(), object);
+                redisUtils.lRemove(offLineString.toString(), 0, object);
+            }
         }
-        redisUtils.del(offLineString.toString());
+
         return Result.ok(onLine);
     }
 
@@ -73,19 +75,25 @@ public class RedisMessageController {
         for (Long id : friendListId) {
             StringBuilder offLineString = RedisPrefixUtils.getStringBuilder(userId, String.valueOf(id), RedisPrefix.SINGLE_CHAT_OFFLINE);
             List<Object> objects = redisUtils.lGet(offLineString.toString(), 0, -1);
-            result.put(id, objects.size());
+            for (Object object : objects) {
+                Message message = (Message) object;
+                if (Objects.equals(message.getToId(), userId)) {
+                    result.put(id, objects.size());
+                }
+            }
         }
-
         return Result.ok(result);
     }
 
     @GetMapping("/redPoint/add/{userId}/{friendId}")
     public Result<Map<Long, Integer>> addRedPoint(@PathVariable("userId") String userId, @PathVariable("friendId") String friendId) {
         StringBuilder stringBuilder = RedisPrefixUtils.getStringBuilder(userId, friendId, RedisPrefix.RED_POINT);
-        if (redisUtils.hasKey(stringBuilder.toString())) {
-            redisUtils.incr(stringBuilder.toString(), 1);
+        if (!redisUtils.hHasKey(stringBuilder.toString(), friendId + "-" + userId)) {
+            redisUtils.hset(stringBuilder.toString(), friendId + "-" + userId, 1);
         } else {
-            redisUtils.set(stringBuilder.toString(), 1);
+            Integer redPoint = (Integer) redisUtils.hget(stringBuilder.toString(), friendId + "-" + userId);
+            int add = redPoint + 1;
+            redisUtils.hset(stringBuilder.toString(), friendId + '-' + userId, add);
         }
 
         List<BlogUsers> friendList = blogUserFriendsService.getFriendList(Long.valueOf(userId));
@@ -97,14 +105,14 @@ public class RedisMessageController {
 
         for (Long id : friendListId) {
             StringBuilder redPoint = RedisPrefixUtils.getStringBuilder(userId, String.valueOf(id), RedisPrefix.RED_POINT);
-            Object object = redisUtils.get(redPoint.toString());
+            Object object = redisUtils.hget(redPoint.toString(), id + "-" + userId);
             result.put(id, (Integer) object);
         }
         return Result.ok(result);
     }
 
     @GetMapping("/redPoint/exit/{userId}")
-    public Result<Map<Long,Integer>> exitRedPoint(@PathVariable("userId") String userId){
+    public Result<Map<Long, Integer>> exitRedPoint(@PathVariable("userId") String userId) {
         List<BlogUsers> friendList = blogUserFriendsService.getFriendList(Long.valueOf(userId));
         List<Long> friendListId = new ArrayList<>();
         for (BlogUsers friend : friendList) {
@@ -114,7 +122,7 @@ public class RedisMessageController {
 
         for (Long id : friendListId) {
             StringBuilder redPoint = RedisPrefixUtils.getStringBuilder(userId, String.valueOf(id), RedisPrefix.RED_POINT);
-            Object object = redisUtils.get(redPoint.toString());
+            Object object = redisUtils.hget(redPoint.toString(), id + "-" + userId);
             result.put(id, (Integer) object);
         }
         return Result.ok(result);
