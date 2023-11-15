@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 public class RedisPrefixUtils {
 
-    private RedisPrefixUtils(){
+    private RedisPrefixUtils() {
 
     }
 
-    public static StringBuilder getStringBuilder(String fromId,String toId, String type) {
+    public static StringBuilder getStringBuilder(String fromId, String toId, String type) {
         StringBuilder stringBuffer = new StringBuilder(type);
         List<Long> list = new ArrayList<>();
         Collections.addAll(list, Long.valueOf(fromId), Long.valueOf(toId));
@@ -32,5 +32,25 @@ public class RedisPrefixUtils {
         }
         return stringBuffer;
     }
+
+
+    public static String groupPrefix(String groupId) {
+        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder groupPrefix = stringBuffer.append("group").append("-").append(groupId);
+        return groupPrefix.toString();
+    }
+
+    public static String groupMessagePrefix(String groupId) {
+        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder groupMessagePrefix = stringBuffer.append("message").append("-").append(groupId);
+        return groupMessagePrefix.toString();
+    }
+
+    public static String groupUserIdPrefix(String userId) {
+        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder groupUserIdPrefix = stringBuffer.append("userId:").append(userId);
+        return groupUserIdPrefix.toString();
+    }
+
 
 }

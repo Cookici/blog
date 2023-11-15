@@ -77,7 +77,14 @@ public class StatusUtils {
      */
     public static void bindChannelGroup(Integer groupId, ChannelGroup channelGroup) {
         groupIdChannelGroupMap.put(groupId, channelGroup);
-       log.info("channelGroup:{}",channelGroup);
+        log.info("channelGroup:{}", channelGroup);
+        for (Channel channel : channelGroup) {
+            log.info("bindChannelGroup channel ====> {}", channel);
+        }
+        log.info("channelGroupSize:{}", channelGroup.size());
+        for (Map.Entry<Integer, ChannelGroup> entry : groupIdChannelGroupMap.entrySet()) {
+            log.info("groupId ===> {},channelGroup ===> {}", entry.getKey(), entry.getValue());
+        }
     }
 
     public static ChannelGroup getChannelGroup(Integer groupId) {

@@ -55,7 +55,7 @@ public class CreateGroupHandler extends SimpleChannelInboundHandler<CreateGroupP
           绑定群id和channelGroup的映射
          */
         Integer groupId = msg.getGroupId();
-        StatusUtils.bindChannelGroup(groupId,channelGroup);
+        StatusUtils.bindChannelGroup(groupId, channelGroup);
         ByteBuf byteBuf = getByteBuf(ctx, groupId, nameList);
         channelGroup.writeAndFlush(new TextWebSocketFrame(byteBuf));
     }
@@ -67,12 +67,11 @@ public class CreateGroupHandler extends SimpleChannelInboundHandler<CreateGroupP
         data.put("status", 200);
         data.put("groupId", groupId);
         data.put("nameList", nameList);
-        System.out.println(data);
-        byte []bytes = data.toJSONString().getBytes(StandardCharsets.UTF_8);
+        log.info("createGroup返回信息：{}", data);
+        byte[] bytes = data.toJSONString().getBytes(StandardCharsets.UTF_8);
         bytebuf.writeBytes(bytes);
         return bytebuf;
     }
-
 
 
 }

@@ -1,13 +1,17 @@
 package com.lrh.blog.chathandler.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.lrh.blog.chathandler.service.BlogGroupService;
 import com.lrh.blog.chathandler.service.BlogUserFriendsService;
 import com.lrh.blog.chathandler.utils.RedisUtils;
 import com.lrh.blog.common.domin.Message;
+import com.lrh.blog.common.entity.BlogGroup;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
 import com.lrh.blog.common.utils.RedisPrefix;
 import com.lrh.blog.common.utils.RedisPrefixUtils;
 import com.lrh.blog.common.vo.BlogUserFriendsVo;
+import com.lrh.blog.common.vo.GroupUserVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +34,9 @@ public class RedisMessageController {
 
     @Autowired
     private BlogUserFriendsService blogUserFriendsService;
+
+    @Autowired
+    private BlogGroupService blogGroupService;
 
     @GetMapping("/get/apply/{userId}")
     public Result<Map<Object, Object>> getApply(@PathVariable Long userId) {
@@ -133,6 +140,50 @@ public class RedisMessageController {
         StringBuilder stringBuilder = RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.RED_POINT);
         redisUtils.del(stringBuilder.toString());
         return Result.ok("clear");
+    }
+
+    @PutMapping("/redPoint/group/clear")
+    public Result<String> clearGroupRedPoint(@RequestBody GroupUserVo groupUserVo) {
+        redisUtils.del(RedisPrefix.RED_POINT + groupUserVo.getUserId() + "-group:" + groupUserVo.getGroupId());
+        return Result.ok("clear");
+    }
+
+
+    @GetMapping("/redPoint/group/add/{userId}/{groupId}")
+    public Result<Map<Long, Integer>> addGroupRedPoint(@PathVariable("userId") String userId, @PathVariable("groupId") String groupId) {
+        String string = RedisPrefix.RED_POINT + userId + "-group:" + groupId;
+        if (!redisUtils.hasKey(string)) {
+            redisUtils.set(string, 1);
+        } else {
+            redisUtils.incr(string, 1);
+        }
+        List<BlogGroup> groupList = blogGroupService.list(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getUserId, userId));
+        Map<Long, Integer> result = new HashMap<>();
+        for (BlogGroup blogGroup : groupList) {
+            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId()) != null) {
+                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId());
+                result.put(blogGroup.getGroupId(), Integer.valueOf(object.toString()));
+            } else {
+                result.put(blogGroup.getGroupId(), 0);
+            }
+        }
+        return Result.ok(result);
+    }
+
+
+    @GetMapping("/redPoint/group/exit/{userId}")
+    public Result<Map<Long, Integer>> exitGroupRedPoint(@PathVariable("userId") String userId) {
+        List<BlogGroup> groupList = blogGroupService.list(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getUserId, userId));
+        Map<Long, Integer> result = new HashMap<>();
+        for (BlogGroup blogGroup : groupList) {
+            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId()) != null) {
+                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId());
+                result.put(blogGroup.getGroupId(), Integer.valueOf(object.toString()));
+            } else {
+                result.put(blogGroup.getGroupId(), 0);
+            }
+        }
+        return Result.ok(result);
     }
 
 

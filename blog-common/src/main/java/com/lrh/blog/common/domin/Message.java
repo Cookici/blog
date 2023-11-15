@@ -1,6 +1,7 @@
 package com.lrh.blog.common.domin;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ProjectName: Blog
@@ -41,6 +42,20 @@ public class Message{
      * 发送时间
      */
     private String time;
+
+
+    /**
+     * 接收到群聊消息的usersId
+     */
+    private List<String> userIdList;
+
+    public List<String> getUserIdList() {
+        return userIdList;
+    }
+
+    public void setUserIdList(List<String> userIdList) {
+        this.userIdList = userIdList;
+    }
 
     public String getFromId() {
         return fromId;
@@ -99,6 +114,7 @@ public class Message{
                 ", status='" + status + '\'' +
                 ", type='" + type + '\'' +
                 ", time='" + time + '\'' +
+                ", userIdList=" + userIdList +
                 '}';
     }
 }

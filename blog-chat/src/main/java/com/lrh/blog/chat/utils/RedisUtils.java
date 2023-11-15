@@ -22,7 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Redis工具类*/
+ * Redis工具类
+ */
 @Component
 public class RedisUtils {
 
@@ -33,6 +34,40 @@ public class RedisUtils {
 
     public Set<String> keys(String pattern) {
         return redisTemplate.keys(pattern);
+    }
+
+
+    /**
+     * bitmap设置某一位的值
+     *
+     * @param key    键
+     * @param offset 偏移
+     * @param value  值(0,1)
+     * @return
+     */
+    public boolean setBit(Object key, long offset, boolean value) {
+        try {
+            return redisTemplate.opsForValue().setBit(key, offset, value);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * getBit 获取某一位的值
+     *
+     * @param key    redis key
+     * @param offset 偏移量：从左到右，从0开始，每8位一个字符，若偏移量为8，则为第2个字符的最高位
+     * @return
+     */
+    public boolean getBit(Object key, long offset) {
+        try {
+            return redisTemplate.opsForValue().getBit(key, offset);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**

@@ -51,15 +51,15 @@ public class GroupMessageHandler extends SimpleChannelInboundHandler<GroupMessag
         String fileType = msg.getFileType();
         ChannelGroup channelGroup = StatusUtils.getChannelGroup(groupId);
         log.info(" GroupMessageHandler channelGroup" + channelGroup);
-        List<String> nameList = new ArrayList<>();
+        List<String> userIdList = new ArrayList<>();
         for (Channel channel : channelGroup) {
             User user = StatusUtils.getUser(channel);
-            nameList.add(user.getUserName());
+            userIdList.add(user.getUserId());
         }
-        sendMessage(ctx, msg.getMessage(), groupId.toString(), Topic.OnLine, "group");
+        sendMessage(ctx, msg.getMessage(), userIdList, groupId.toString(), Topic.OnLine, "group");
         if (channelGroup != null) {
             User user = StatusUtils.getUser(ctx.channel());
-            ByteBuf byteBuf = getByteBuf(ctx, groupId, msg.getMessage(), user, fileType, nameList);
+            ByteBuf byteBuf = getByteBuf(ctx, groupId, msg.getMessage(), user, fileType, userIdList);
             /*
              * 发送方不需要自己再收到消息
              */
@@ -70,7 +70,7 @@ public class GroupMessageHandler extends SimpleChannelInboundHandler<GroupMessag
     }
 
     private ByteBuf getByteBuf(ChannelHandlerContext ctx, Integer groupId, String message,
-                               User fromUser, String fileType, List<String> nameList) {
+                               User fromUser, String fileType, List<String> userIdList) {
         ByteBuf byteBuf = ctx.alloc().buffer();
         JSONObject data = new JSONObject();
         data.put("type", Type.GROUP_MESSAGE_RESPONSE);
@@ -80,15 +80,15 @@ public class GroupMessageHandler extends SimpleChannelInboundHandler<GroupMessag
         params.put("fileType", fileType);
         params.put("fromUser", fromUser);
         params.put("groupId", groupId);
-        Collections.reverse(nameList);
-        params.put("nameList", nameList);
+        Collections.reverse(userIdList);
+        params.put("nameList", userIdList);
         data.put("params", params);
-        byte []bytes = data.toJSONString().getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = data.toJSONString().getBytes(StandardCharsets.UTF_8);
         byteBuf.writeBytes(bytes);
         return byteBuf;
     }
 
-    private void sendMessage(ChannelHandlerContext ctx, String message, String toUser, String status, String type) {
+    private void sendMessage(ChannelHandlerContext ctx, String message, List<String> userIdList, String toUser, String status, String type) {
         Message messageMQ = new Message();
         messageMQ.setFromId(StatusUtils.getUser(ctx.channel()).getUserId());
         messageMQ.setToId(toUser);
@@ -96,11 +96,11 @@ public class GroupMessageHandler extends SimpleChannelInboundHandler<GroupMessag
         messageMQ.setInfoContent(message);
         messageMQ.setTime(new DateTime().toString());
         messageMQ.setStatus(status);
+        messageMQ.setUserIdList(userIdList);
         Message2 message2 = new Message2();
         BeanUtils.copyProperties(messageMQ, message2);
         rabbitMqUtils.messageSend2(message2);
     }
-
 
 
 }
