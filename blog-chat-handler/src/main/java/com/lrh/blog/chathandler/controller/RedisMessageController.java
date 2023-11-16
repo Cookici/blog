@@ -186,5 +186,37 @@ public class RedisMessageController {
         return Result.ok(result);
     }
 
+    @GetMapping("/allGroupMessage/{groupId}")
+    public Result<List<Message>> allGroupMessage(@PathVariable("groupId") String groupId) {
+        List<Object> objects = redisUtils.lGet(RedisPrefixUtils.groupHistoryMessagePrefix(groupId), 0, -1);
+        Map<Object, Object> hmget = redisUtils.hmget(RedisPrefixUtils.groupMessagePrefix(groupId));
+        List<Message> messageList = new ArrayList<>();
+        for (Map.Entry<Object, Object> map : hmget.entrySet()) {
+            messageList.add((Message) map.getValue());
+        }
+        for (Object object : objects) {
+            Message message = (Message) object;
+            messageList.add(message);
+        }
+        messageList.sort(Comparator.comparing(Message::getTime));
+        return Result.ok(messageList);
+    }
+
+
+    @PostMapping("/group/setBitmap/{groupId}/{userId}")
+    public Result<String> groupOffLineClear(@PathVariable("groupId") String groupId, @PathVariable("userId") String userId) {
+        int count = blogGroupService.count(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getGroupId, groupId));
+        Object hget = redisUtils.hget(RedisPrefixUtils.groupPrefix(groupId), RedisPrefixUtils.groupUserIdPrefix(userId));
+        Map<Object, Object> hmget = redisUtils.hmget(RedisPrefixUtils.groupMessagePrefix(groupId));
+        for (Map.Entry<Object, Object> map : hmget.entrySet()) {
+            redisUtils.setBit(map.getKey(), Long.parseLong(hget.toString()), true);
+            if (count == redisUtils.bitCount((String) map.getKey())) {
+                redisUtils.del((String) map.getKey());
+                redisUtils.hdel(RedisPrefixUtils.groupMessagePrefix(groupId), map.getKey());
+                redisUtils.lSet(RedisPrefixUtils.groupHistoryMessagePrefix(groupId), map.getValue());
+            }
+        }
+        return Result.ok("bitMap sets");
+    }
 
 }

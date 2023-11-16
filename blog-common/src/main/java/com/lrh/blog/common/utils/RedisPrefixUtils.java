@@ -53,4 +53,11 @@ public class RedisPrefixUtils {
     }
 
 
+    public static String groupHistoryMessagePrefix(String groupId) {
+        StringBuilder stringBuffer = new StringBuilder();
+        StringBuilder groupHistoryMessagePrefix = stringBuffer.append("historyMessage").append("-").append("group").append(groupId);
+        return groupHistoryMessagePrefix.toString();
+    }
+
+
 }

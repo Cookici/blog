@@ -2,6 +2,7 @@ package com.lrh.blog.chathandler.utils;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Redis工具类*/
+ * Redis工具类
+ */
 @Component
 public class RedisUtils {
 
@@ -84,6 +86,19 @@ public class RedisUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    /**
+     * 获取bitCount有几个1
+     * @param key  redis key
+     * @return
+     */
+    public Long bitCount(String key) {
+        try {
+            return (long) redisTemplate.execute((RedisCallback<Long>) con -> con.bitCount(key.getBytes()));
+        } catch (Exception e) {
+            return 0L;
         }
     }
 

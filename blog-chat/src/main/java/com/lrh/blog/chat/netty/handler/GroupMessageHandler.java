@@ -76,8 +76,7 @@ public class GroupMessageHandler extends SimpleChannelInboundHandler<GroupMessag
         data.put("type", Type.GROUP_MESSAGE_RESPONSE);
         data.put("status", 200);
         JSONObject params = new JSONObject();
-        params.put("message", message);
-        params.put("fileType", fileType);
+        params.put("message", message);params.put("fileType", fileType);
         params.put("fromUser", fromUser);
         params.put("groupId", groupId);
         Collections.reverse(userIdList);

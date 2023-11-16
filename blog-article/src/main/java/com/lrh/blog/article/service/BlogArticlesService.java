@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * <p>
- *  服务类
+ * 服务类
  * </p>
  *
  * @author lrh
@@ -18,7 +18,7 @@ import java.util.List;
  */
 public interface BlogArticlesService extends IService<BlogArticles> {
 
-    IPage<BlogArticles> getAllBlogArticles(Page<BlogArticles> page);
+    IPage<BlogArticles> getAllBlogArticles(String sortId, Page<BlogArticles> page);
 
     List<BlogArticles> getAllBlogArticlesById(Long id);
 

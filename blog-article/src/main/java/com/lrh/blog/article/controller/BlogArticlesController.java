@@ -12,6 +12,9 @@ import com.lrh.blog.common.result.Result;;
 import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -32,11 +35,18 @@ public class BlogArticlesController {
     @Autowired
     private BlogUsersServer blogUsersServer;
 
-    @GetMapping("/getAll/{index}")
-    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable Integer index) {
+    @GetMapping("/getAll/{sortName}/{index}")
+    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index) throws UnsupportedEncodingException {
+        Map<String, Object> map = new HashMap<>();
         Page<BlogArticles> page = new Page<>(index, 5);
-        IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(page);
+        IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(sortName, page);
         List<BlogArticles> records = allBlogArticles.getRecords();
+        if (records == null) {
+            map.put("data", null);
+            map.put("total", 0);
+            map.put("pageAll", 0);
+            return Result.ok(map);
+        }
         List<Long> ids = new ArrayList<>();
         records.forEach(item -> ids.add(item.getUserId()));
         Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(ids);
@@ -44,6 +54,7 @@ public class BlogArticlesController {
         List<BlogUsers> articlesForUsers = byIds.getData();
         for (BlogUsers articlesForUser : articlesForUsers) {
             articlesForUser.setUserPassword(null);
+            articlesForUser.setUserTelephoneNumber(null);
         }
 
 
@@ -55,7 +66,6 @@ public class BlogArticlesController {
             }
         }
 
-        Map<String, Object> map = new HashMap<>();
 
         map.put("data", allBlogArticles.getRecords());
         map.put("total", allBlogArticles.getTotal());
@@ -87,7 +97,7 @@ public class BlogArticlesController {
 
 
     @PostMapping("/create/{userId}")
-    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo){
+    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo) {
         Integer i = blogArticlesService.insertArticle(userId, blogArticlesVo.getTitle(), blogArticlesVo.getContent());
         return Result.ok(i);
     }
@@ -109,6 +119,12 @@ public class BlogArticlesController {
         blogArticles.setArticleViews(articleViews);
         int update = blogArticlesService.getBaseMapper().update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, articleId));
         return Result.ok(update);
+    }
+
+    @GetMapping("/hotArticle")
+    public Result<BlogArticles> getHotArticle(){
+
+        return Result.ok();
     }
 
 }
