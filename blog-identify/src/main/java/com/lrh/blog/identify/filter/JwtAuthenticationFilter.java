@@ -41,13 +41,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter  {
     @Autowired
     private UserDetailService userDetailService;
 
-    private static final String[] URL_WHITELIST = {
-            "/login",
-            "/logout",
-            "/captcha",
-            "/blog/identify/register",
-            "/favicon.ico",
-    };
+
 
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -58,7 +52,7 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter  {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         String jwt = request.getHeader(jwtUtils.getHeader());
         log.error("jwtAuthenticationFilter---->{}",request.getRequestURI());
-        boolean judge =  Arrays.asList(URL_WHITELIST).contains(request.getRequestURI());
+        boolean judge =  Arrays.asList(WhiteList.URL_WHITELIST).contains(request.getRequestURI());
         if (judge) {
             chain.doFilter(request,response);
             return;

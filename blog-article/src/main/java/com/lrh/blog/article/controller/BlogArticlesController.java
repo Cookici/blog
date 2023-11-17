@@ -122,9 +122,27 @@ public class BlogArticlesController {
     }
 
     @GetMapping("/hotArticle")
-    public Result<BlogArticles> getHotArticle(){
+    public Result<List<BlogArticles>> getHotArticle(){
+        List<BlogArticles> blogArticlesList = blogArticlesService.list(new LambdaQueryWrapper<BlogArticles>().orderByDesc(BlogArticles::getArticleLikeCount).last("limit 5"));
+        List<Long> ids = new ArrayList<>();
+        for (BlogArticles blogArticles : blogArticlesList) {
+            ids.add(blogArticles.getUserId());
+        }
+        Result<List<BlogUsers>> byIds = blogUsersServer.getByIds(ids);
+        List<BlogUsers> blogUsersList = byIds.getData();
+        for (BlogUsers blogUsers : blogUsersList) {
+            blogUsers.setUserPassword(null);
+            blogUsers.setUserTelephoneNumber(null);
+        }
 
-        return Result.ok();
+        for (BlogArticles article : blogArticlesList) {
+            if (ids.contains(article.getUserId())) {
+                BlogUsers blogUsers = blogUsersList.stream()
+                        .filter(user -> user.getUserId().equals(article.getUserId())).findFirst().get();
+                article.setBlogUsers(blogUsers);
+            }
+        }
+        return Result.ok(blogArticlesList);
     }
 
 }

@@ -69,13 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
 
-    private static final String[] URL_WHITELIST = {
-            "/login",
-            "/logout",
-            "/captcha",
-            "/blog/identify/register",
-            "/favicon.ico",
-    };
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -101,7 +95,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 // 配置拦截规则
                 .and()
                 .authorizeRequests()
-                .antMatchers(URL_WHITELIST).permitAll()
+                .antMatchers(WhiteList.URL_WHITELIST).permitAll()
                 .anyRequest().authenticated()
                 // 异常处理器
                 .and()
