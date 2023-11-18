@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2023-11-16
  */
 @RestController
-@RequestMapping("/article/article-sort")
+@RequestMapping("/blog/article-sort")
 public class BlogSetArticleSortController {
 
 }

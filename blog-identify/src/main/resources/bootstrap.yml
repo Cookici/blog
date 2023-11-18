@@ -24,11 +24,32 @@ spring:
           - data-id: mybatis-plus.yaml
             group: common
             refresh: true
+    gateway:
+      default-filters:
+        - AddRequestHeader=gateway-env, blog-gateway
+      routes:
+        - id: article
+          uri: lb://blog-article
+          predicates:
+            - Path=/blog/articles/**,/blog/sorts/**,/blog/article-label/**,/blog/article-sort/**,/blog/label/**
+
+        - id: chat
+          uri: lb://blog-chat-handler
+          predicates:
+            - Path=/blog/chat/**,/blog/redis/**,/blog/group/**
+
+        - id: oss
+          uri: lb://blog-oss
+          predicates:
+            - Path=/blog/oss/**
+
+
   main:
     allow-bean-definition-overriding: true
 
 mybatis-plus:
   mapper-locations: classpath:mapper/xml/*.xml
+
 
 
 

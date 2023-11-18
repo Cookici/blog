@@ -25,7 +25,7 @@ import java.util.Map;
  * @since 2023-11-16
  */
 @RestController
-@RequestMapping("/article/sorts")
+@RequestMapping("/blog/sorts")
 public class BlogSortsController {
 
     @Autowired

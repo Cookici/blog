@@ -1,8 +1,10 @@
 package com.lrh.blog.identify.service;
 
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import reactor.core.publisher.Mono;
 
 /**
  * @ProjectName: Blog
@@ -13,8 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @Date: 2023/10/21 12:40
  */
 
-public interface UserDetailService extends UserDetailsService {
+public interface UserDetailService extends ReactiveUserDetailsService {
     @Override
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
-
+    Mono<UserDetails> findByUsername(String username);
 }

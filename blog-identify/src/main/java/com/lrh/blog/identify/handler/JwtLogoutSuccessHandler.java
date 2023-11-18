@@ -1,13 +1,20 @@
-package com.lrh.blog.identify.filter;
+package com.lrh.blog.identify.handler;
 
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson2.JSONObject;
 import com.lrh.blog.common.result.Result;
 import com.lrh.blog.identify.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.security.web.server.WebFilterExchange;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -27,26 +34,23 @@ import java.nio.charset.StandardCharsets;
  */
 
 @Component
-public class JwtLogoutSuccessHandler implements LogoutSuccessHandler {
+public class JwtLogoutSuccessHandler implements ServerLogoutSuccessHandler {
 
     @Autowired
     private JwtUtils jwtUtils;
 
     @Override
-    public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
-
-        response.setContentType("application/json;charset=UTF-8");
-        ServletOutputStream outputStream = response.getOutputStream();
-
-        response.setHeader(jwtUtils.getHeader(), "");
-
-        Result<String> result = Result.ok("登出成功");
-
-        outputStream.write(JSONUtil.toJsonStr(result).getBytes(StandardCharsets.UTF_8));
-        outputStream.flush();
-        outputStream.close();
+    public Mono<Void> onLogoutSuccess(WebFilterExchange exchange, Authentication authentication) {
+        return Mono.defer(() -> Mono.just(exchange.getExchange().getResponse()).flatMap(serverHttpResponse -> {
+            if (authentication != null) {
+                SecurityContextHolder.clearContext();
+            }
+            DataBufferFactory dataBufferFactory = serverHttpResponse.bufferFactory();
+            serverHttpResponse.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            serverHttpResponse.getHeaders().set(jwtUtils.getHeader(), "");
+            Result<String> result = Result.ok("登出成功");
+            DataBuffer dataBuffer = dataBufferFactory.wrap(JSONObject.toJSONString(result).getBytes(StandardCharsets.UTF_8));
+            return serverHttpResponse.writeWith(Mono.just(dataBuffer));
+        }));
     }
 }

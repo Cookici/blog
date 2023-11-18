@@ -1,23 +1,23 @@
 package com.lrh.blog.identify.config;
 
+import com.lrh.blog.identify.authentication.JwtAuthenticationEntryPoint;
+import com.lrh.blog.identify.authentication.SecurityRepository;
 import com.lrh.blog.identify.filter.*;
-import com.lrh.blog.identify.handler.LoginFailureHandler;
-import com.lrh.blog.identify.handler.LoginSuccessHandler;
-import com.lrh.blog.identify.service.impl.UserDetailServiceImpl;
-import lombok.RequiredArgsConstructor;
+import com.lrh.blog.identify.handler.*;
+import com.lrh.blog.identify.service.UserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.authentication.DelegatingReactiveAuthenticationManager;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import java.util.LinkedList;
 
 /**
  * @ProjectName: Blog
@@ -27,12 +27,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @Description:
  * @Date: 2023/10/22 13:44
  */
-
-@Configuration
-@EnableWebSecurity
-@RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebFluxSecurity
+public class SecurityConfig {
 
     @Autowired
     private LoginFailureHandler loginFailureHandler;
@@ -50,72 +46,59 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
     @Autowired
-    private UserDetailServiceImpl userDetailService;
+    private UserDetailService userDetailService;
 
     @Autowired
     private JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
+    @Autowired
+    SecurityRepository securityRepository;
+
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager());
+    ReactiveAuthenticationManager reactiveAuthenticationManager() {
+        LinkedList<ReactiveAuthenticationManager> managers = new LinkedList<>();
+        UserDetailsRepositoryReactiveAuthenticationManager userDetailsRepositoryReactiveAuthenticationManager =
+                new UserDetailsRepositoryReactiveAuthenticationManager(userDetailService);
+        userDetailsRepositoryReactiveAuthenticationManager.setPasswordEncoder(passwordEncoder());
+        managers.add(userDetailsRepositoryReactiveAuthenticationManager);
+        return new DelegatingReactiveAuthenticationManager(managers);
     }
+
 
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+        return http
+                .cors().and().csrf().disable()
+                // 登录配置
+                .formLogin()
+                .authenticationSuccessHandler(loginSuccessHandler)
+                .authenticationFailureHandler(loginFailureHandler)
+                .and()
+                .logout()
+                .logoutSuccessHandler(jwtLogoutSuccessHandler)
+                .and()
+                // 配置拦截规则
+                .authorizeExchange()
+                .pathMatchers(WhiteList.URL_WHITELIST).permitAll()
+                .anyExchange().authenticated()
+                .and()
+                // 异常处理器
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+                .and()
+                // 验证码过滤器放在最前
+                .addFilterBefore(captchaFilter, SecurityWebFiltersOrder.HTTP_BASIC)
+                .securityContextRepository(securityRepository)
+                .build();
     }
-
-
-
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                // 登录配置
-                .formLogin()
-                .successHandler(loginSuccessHandler)
-                .failureHandler(loginFailureHandler)
-
-                .and()
-                .logout()
-                .logoutSuccessHandler(jwtLogoutSuccessHandler)
-
-                // 禁用session
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                // 配置拦截规则
-                .and()
-                .authorizeRequests()
-                .antMatchers(WhiteList.URL_WHITELIST).permitAll()
-                .anyRequest().authenticated()
-                // 异常处理器
-                .and()
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
-
-                // 配置自定义的过滤器
-                .and()
-                .addFilter(jwtAuthenticationFilter())
-                // 验证码过滤器放在UsernamePassword过滤器之前
-                .addFilterBefore(captchaFilter, UsernamePasswordAuthenticationFilter.class)
-        ;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
-    }
-
-
 
 }
+

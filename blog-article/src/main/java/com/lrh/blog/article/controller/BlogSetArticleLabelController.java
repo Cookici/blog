@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2023-11-16
  */
 @RestController
-@RequestMapping("/article/article-label")
+@RequestMapping("/blog/article-label")
 public class BlogSetArticleLabelController {
 
 }

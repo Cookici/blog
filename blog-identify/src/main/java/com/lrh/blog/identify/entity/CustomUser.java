@@ -4,6 +4,7 @@ import com.lrh.blog.common.entity.BlogUsers;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Collection;
  * @Date: 2023/10/21 12:36
  */
 
-public class CustomUser extends User {
+public class CustomUser extends User implements Serializable {
 
     private BlogUsers blogUsers;
 

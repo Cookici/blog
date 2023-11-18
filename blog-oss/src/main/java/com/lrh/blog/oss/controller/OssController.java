@@ -30,6 +30,7 @@ import java.util.Map;
 
 @RestController
 @RefreshScope
+@RequestMapping("/blog/oss")
 public class OssController {
 
     @Autowired
@@ -47,7 +48,7 @@ public class OssController {
     @Value("${spring.cloud.alicloud.secret-key}")
     private String secretKey;
 
-    @PostMapping("/oss/policy/{username}")
+    @PostMapping("/policy/{username}")
     public Result<Map<String, String>> policy(HttpServletResponse response, @PathVariable("username") String username) {
         // 填写Host地址，格式为https://bucketname.endpoint。
         String host = "https://" + bucket;
@@ -86,7 +87,7 @@ public class OssController {
     }
 
 
-    @DeleteMapping("/oss/deleteFile")
+    @DeleteMapping("/deleteFile")
     public Result<Object> deleteFileByFileUrl(@RequestBody BlogPhotoVo blogPhotoVo) {
         try {
             String userName = blogPhotoVo.getUserName();

@@ -9,6 +9,7 @@ import com.lrh.blog.common.vo.BlogPhotoVo;
 import com.lrh.blog.identify.service.BlogUsersService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -37,8 +39,8 @@ public class BlogUsersController {
 
 
     @PostMapping("/register")
-    public Result<Integer> register(@RequestBody BlogUsers blogUsers, HttpServletRequest request) {
-        blogUsers.setUserIp(request.getRemoteHost());
+    public Result<Integer> register(@RequestBody BlogUsers blogUsers, ServerHttpRequest request) {
+        blogUsers.setUserIp(Objects.requireNonNull(request.getRemoteAddress()).getHostString());
         LocalDate localDate = LocalDate.now();
         Integer age = Math.toIntExact(ChronoUnit.YEARS.between(blogUsers.getUserBirthday(), localDate));
         blogUsers.setUserPassword(new BCryptPasswordEncoder().encode(blogUsers.getUserPassword()));

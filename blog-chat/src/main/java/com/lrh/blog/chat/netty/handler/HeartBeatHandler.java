@@ -65,7 +65,9 @@ public class HeartBeatHandler extends SimpleChannelInboundHandler<HeartBeatPacke
                 log.info("客户端写空闲");
             } else if (idleStateEvent.state() == IdleState.ALL_IDLE) {
                 log.info("客户端读写空闲");
-                StatusUtils.clearChannel(StatusUtils.getUser(ctx.channel()), ctx.channel());
+                if (StatusUtils.getUser(ctx.channel()) != null) {
+                    StatusUtils.clearChannel(StatusUtils.getUser(ctx.channel()), ctx.channel());
+                }
                 ctx.channel().close();
             }
         }

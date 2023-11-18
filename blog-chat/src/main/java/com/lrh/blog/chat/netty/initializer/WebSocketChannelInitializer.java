@@ -13,6 +13,8 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @ProjectName: Blog
  * @Package: com.lrh.blog.chat.server.handler
@@ -65,7 +67,7 @@ public class WebSocketChannelInitializer extends ChannelInitializer<SocketChanne
                   浏览器请求时，ws://localhost:port/XXX 表示请求的资源
                   核心功能是 将http协议升级为ws协议，保持长连接
                  */
-                .addLast("idleStateHandler", new IdleStateHandler(30, 30, 60))
+                .addLast("idleStateHandler", new IdleStateHandler(30, 30, 60, TimeUnit.MINUTES))
                 .addLast("webSocketServerProtocolHandler", new WebSocketServerProtocolHandler("/"))
                 .addLast("baseHandler", webSocketRequestHandler)
                 .addLast("registerHandler", registerHandler)

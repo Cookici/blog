@@ -9,9 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -32,15 +34,13 @@ public class UserDetailServiceImpl implements UserDetailService {
     private BlogUsersService blogUsersService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public Mono<UserDetails> findByUsername(String username) {
         BlogUsers blogUsers = blogUsersService.selectUserByUsername(username);
         if (blogUsers == null) {
             throw new UsernameNotFoundException("用户名或密码错误");
         }
         List<GrantedAuthority> list = AuthorityUtils.commaSeparatedStringToAuthorityList(blogUsers.getUserAuthority());
-        return new CustomUser(blogUsers,list);
+        return Mono.just(new CustomUser(blogUsers,list));
+
     }
-
-
-
 }

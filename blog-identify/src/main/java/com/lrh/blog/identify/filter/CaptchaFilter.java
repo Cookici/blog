@@ -6,14 +6,16 @@ import com.lrh.blog.identify.utils.RedisUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.security.web.server.WebFilterExchange;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * @ProjectName: Blog
@@ -25,7 +27,7 @@ import java.io.IOException;
  */
 @Slf4j
 @Component
-public class CaptchaFilter extends OncePerRequestFilter {
+public class CaptchaFilter implements WebFilter {
 
     @Autowired
     private RedisUtils redisUtils;
@@ -34,35 +36,34 @@ public class CaptchaFilter extends OncePerRequestFilter {
     private LoginFailureHandler loginFailureHandler;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        String url = exchange.getRequest().getURI().getPath();
+        log.info("CaptchaFilter ----> {}", url);
 
-        String url = request.getRequestURI();
-        log.error("captchaFilter---->{}",url);
-        if ("/login".equals(url) && request.getMethod().equals("POST")) {
-            // 校验验证码
+        if ("/login".equals(url) && exchange.getRequest().getMethod() == HttpMethod.POST) {
+            // Validate captcha
             try {
-                validate(request);
+                log.info("validate ---> 开始");
+                validate(exchange.getRequest());
             } catch (CaptchaException e) {
-                /*
-                  交给认证失败处理器
-                 */
-                try {
-                    loginFailureHandler.onAuthenticationFailure(request, response, e);
-                } catch (IOException | ServletException ex) {
-                    throw new RuntimeException(ex);
-                }
+                // Handle authentication failure
+                return loginFailureHandler.onAuthenticationFailure(new WebFilterExchange(exchange, chain), e);
             }
         }
-        filterChain.doFilter(request, response);
+
+        return chain.filter(exchange);
     }
 
     /**
-     * 校验验证码逻辑
+     * Validate captcha logic
      */
-    private void validate(HttpServletRequest httpServletRequest) {
-
-        String code = httpServletRequest.getParameter("code");
-        String key = httpServletRequest.getParameter("userKey");
+    private void validate(ServerHttpRequest request) {
+        String code = request.getQueryParams().getFirst("code");
+        String key = request.getQueryParams().getFirst("userKey");
+        MultiValueMap<String, String> queryParams = request.getQueryParams();
+        log.info("queryParams --> {}", queryParams);
+        log.info("code --> {}", code);
+        log.info("key --> {}", key);
         if (StringUtils.isBlank(code) || StringUtils.isBlank(key)) {
             throw new CaptchaException("验证码错误");
         }
@@ -71,14 +72,8 @@ public class CaptchaFilter extends OncePerRequestFilter {
             throw new CaptchaException("验证码错误");
         }
 
-        /*
-           若验证码正确，执行以下语句
-           一次性使用
-         */
-
+        // If captcha is correct, perform one-time actions
         redisUtils.hdel("captcha", key);
     }
-
-
 }
 

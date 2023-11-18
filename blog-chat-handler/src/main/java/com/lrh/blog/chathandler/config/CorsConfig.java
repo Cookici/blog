@@ -28,13 +28,11 @@ public class CorsConfig {
         // 允许哪个方法进行跨域
         corsConfiguration.addAllowedMethod("*");
         // 允许哪个请求来源进行跨域
-        corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedOriginPattern("*");
         // 是否允许携带cookie进行跨域
-        corsConfiguration.setAllowCredentials(true);
+        corsConfiguration.setAllowCredentials(false);
 
         source.registerCorsConfiguration("/**",corsConfiguration);
-
         return new CorsWebFilter(source);
     }
 
