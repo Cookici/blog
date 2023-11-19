@@ -27,8 +27,7 @@ import java.nio.charset.StandardCharsets;
  * @Package: com.lrh.blog.identify.filter
  * @ClassName: JwtAccessDeniedHandler
  * @Author: 63283
- * @Description: 我们之前放行了匿名请求，但有的接口是需要权限的，当用户权限不足时，会进入AccessDeniedHandler进行处理，我们定义JwtAccessDeniedHandler类来实现该接口，需重写其handle方法
- * 当权限不足时，我们需要设置权限不足状态码401，并将错误信息返回给前端
+ * @Description: 没有权限会进入该方法
  * @Date: 2023/10/22 13:35
  */
 @Component

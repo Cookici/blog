@@ -57,7 +57,7 @@ public class RabbiMqListener {
                 redisUtils.lSet(stringBuffer.toString(), message);
             }
         } else {
-            String uuid = UUID.randomUUID().toString();
+            String uuid = message.getId();
             redisUtils.hset(RedisPrefixUtils.groupMessagePrefix(message.getToId()), uuid, message);
             List<String> userIdList = message.getUserIdList();
             for (String userId : userIdList) {

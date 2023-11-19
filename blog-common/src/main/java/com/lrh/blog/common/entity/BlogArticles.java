@@ -71,4 +71,21 @@ public class BlogArticles implements Serializable {
     @TableField(exist = false)
     private BlogUsers blogUsers;
 
+    @TableField(exist = false)
+    private BlogLabels blogLabels;
+
+    @TableField(exist = false)
+    private BlogSorts blogSorts;
+
+    public BlogArticles(Long articleId, Long userId, String articleTitle, String articleContent, Long articleViews, Long articleCommentCount, LocalDateTime articleDate, Long articleLikeCount) {
+        this.articleId = articleId;
+        this.userId = userId;
+        this.articleTitle = articleTitle;
+        this.articleContent = articleContent;
+        this.articleViews = articleViews;
+        this.articleCommentCount = articleCommentCount;
+        this.articleDate = articleDate;
+        this.articleLikeCount = articleLikeCount;
+    }
+
 }

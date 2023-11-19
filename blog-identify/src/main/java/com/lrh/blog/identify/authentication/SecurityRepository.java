@@ -4,7 +4,6 @@ import com.lrh.blog.identify.filter.WhiteList;
 import com.lrh.blog.identify.service.UserDetailService;
 import com.lrh.blog.identify.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.stereotype.Component;
@@ -27,7 +25,7 @@ import java.util.Collection;
  * @Package: com.lrh.blog.identify.handler
  * @ClassName: SecurityRepository
  * @Author: 63283
- * @Description:
+ * @Description: 自定义认证 需要JWT才能认证 赋值给SecurityContextHolder
  * @Date: 2023/11/18 14:43
  */
 @Slf4j

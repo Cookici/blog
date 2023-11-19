@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
  * @Package: com.lrh.blog.identify.handler
  * @ClassName: ServerFormLoginAuthenticationConverter
  * @Author: 63283
- * @Description:
+ * @Description: 全局网关过滤器
  * @Date: 2023/11/17 17:14
  */
 @Slf4j

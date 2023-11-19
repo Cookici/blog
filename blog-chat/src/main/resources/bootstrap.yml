@@ -20,3 +20,6 @@ spring:
           - data-id: redis.yaml
             group: common
             refresh: true
+
+  rabbitmq:
+    publisher-confirm-type: correlated

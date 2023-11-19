@@ -22,4 +22,8 @@ public class BlogArticlesVo {
 
     private String content;
 
+    private String labelId;
+
+    private String sortId;
+
 }

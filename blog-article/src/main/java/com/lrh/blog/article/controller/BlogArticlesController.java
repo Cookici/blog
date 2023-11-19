@@ -4,17 +4,13 @@ package com.lrh.blog.article.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lrh.blog.article.service.BlogArticlesService;
-import com.lrh.blog.article.service.BlogUsersServer;
-import com.lrh.blog.common.entity.BlogArticles;
-import com.lrh.blog.common.entity.BlogUsers;
+import com.lrh.blog.article.service.*;
+import com.lrh.blog.common.entity.*;
 import com.lrh.blog.common.result.Result;;
 import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.*;
 
 /**
@@ -35,8 +31,20 @@ public class BlogArticlesController {
     @Autowired
     private BlogUsersServer blogUsersServer;
 
+    @Autowired
+    private BlogLabelsService blogLabelsService;
+
+    @Autowired
+    private BlogSetArticleLabelService blogSetArticleLabelService;
+
+    @Autowired
+    private BlogSortsService blogSortsService;
+
+    @Autowired
+    private BlogSetArticleSortService blogSetArticleSortService;
+
     @GetMapping("/getAll/{sortName}/{index}")
-    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index) throws UnsupportedEncodingException {
+    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index) {
         Map<String, Object> map = new HashMap<>();
         Page<BlogArticles> page = new Page<>(index, 5);
         IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(sortName, page);
@@ -64,6 +72,14 @@ public class BlogArticlesController {
                         .filter(user -> user.getUserId().equals(article.getUserId())).findFirst().get();
                 article.setBlogUsers(blogUsers);
             }
+            BlogSetArticleLabel blogSetArticleLabel = blogSetArticleLabelService.getOne(new LambdaQueryWrapper<BlogSetArticleLabel>().eq(BlogSetArticleLabel::getArticleId, article.getArticleId()));
+            Long labelId = blogSetArticleLabel.getLabelId();
+            BlogLabels blogLabels = blogLabelsService.getOne(new LambdaQueryWrapper<BlogLabels>().eq(BlogLabels::getLabelId, labelId));
+            BlogSetArticleSort blogSetArticleSort = blogSetArticleSortService.getOne(new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, article.getArticleId()));
+            Long sortId = blogSetArticleSort.getSortId();
+            BlogSorts blogSorts = blogSortsService.getOne(new LambdaQueryWrapper<BlogSorts>().eq(BlogSorts::getSortId, sortId));
+            article.setBlogLabels(blogLabels);
+            article.setBlogSorts(blogSorts);
         }
 
 
@@ -98,7 +114,7 @@ public class BlogArticlesController {
 
     @PostMapping("/create/{userId}")
     public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo) {
-        Integer i = blogArticlesService.insertArticle(userId, blogArticlesVo.getTitle(), blogArticlesVo.getContent());
+        Integer i = blogArticlesService.insertArticle(userId, blogArticlesVo.getTitle(), blogArticlesVo.getContent(), blogArticlesVo.getLabelId(), blogArticlesVo.getSortId());
         return Result.ok(i);
     }
 
@@ -122,7 +138,7 @@ public class BlogArticlesController {
     }
 
     @GetMapping("/hotArticle")
-    public Result<List<BlogArticles>> getHotArticle(){
+    public Result<List<BlogArticles>> getHotArticle() {
         List<BlogArticles> blogArticlesList = blogArticlesService.list(new LambdaQueryWrapper<BlogArticles>().orderByDesc(BlogArticles::getArticleLikeCount).last("limit 5"));
         List<Long> ids = new ArrayList<>();
         for (BlogArticles blogArticles : blogArticlesList) {

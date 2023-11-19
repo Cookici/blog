@@ -1,0 +1,35 @@
+spring:
+
+  application:
+    name: blog-search
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.29.200:9002
+      config:
+        server-addr: 192.168.29.200:9002
+        namespace: ad6d1676-faf9-403a-862f-f2ccf10d5c32
+        file-extension: yaml
+        group: dev
+        extension-configs:
+          - data-id: mysql.yaml
+            group: common
+            refresh: true
+
+          - data-id: mybatis-plus.yaml
+            group: common
+            refresh: true
+
+          - data-id: elsaticsearch.yaml
+            group: common
+            refresh: true
+
+  data:
+    elasticsearch:
+      repositories:
+        enabled: true
+
+logging:
+  level:
+    com.lrh.blog.search: debug

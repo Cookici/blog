@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @Package: com.lrh.blog.identify.handler
  * @ClassName: LoginSuccessHandler
  * @Author: 63283
- * @Description:
+ * @Description: 登录成功处理器
  * @Date: 2023/10/22 12:23
  */
 

@@ -15,6 +15,11 @@ import java.util.List;
 public class Message2 implements Serializable {
 
     /**
+     * 消息Id
+     */
+    private String Id;
+
+    /**
      * 发送方Id
      */
     private String fromId;
@@ -49,6 +54,15 @@ public class Message2 implements Serializable {
      * 接收到群聊消息的usersId
      */
     private List<String> userIdList;
+
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 
     public List<String> getUserIdList() {
         return userIdList;

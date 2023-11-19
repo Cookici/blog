@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
  * @Package: com.lrh.blog.identify.filter
  * @ClassName: CaptchFilter
  * @Author: 63283
- * @Description:
+ * @Description: 验证码过滤器
  * @Date: 2023/10/22 13:16
  */
 @Slf4j

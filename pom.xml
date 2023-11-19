@@ -17,6 +17,7 @@
         <module>blog-article</module>
         <module>blog-chat</module>
         <module>blog-chat-handler</module>
+        <module>blog-search</module>
     </modules>
 
     <properties>

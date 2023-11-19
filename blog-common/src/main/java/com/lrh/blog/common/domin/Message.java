@@ -13,6 +13,12 @@ import java.util.List;
  */
 
 public class Message{
+
+    /**
+     * 消息Id
+     */
+    private String Id;
+
     /**
      * 发送方Id
      */
@@ -48,6 +54,14 @@ public class Message{
      * 接收到群聊消息的usersId
      */
     private List<String> userIdList;
+
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
 
     public List<String> getUserIdList() {
         return userIdList;

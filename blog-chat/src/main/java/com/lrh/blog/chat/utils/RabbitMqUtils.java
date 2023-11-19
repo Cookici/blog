@@ -1,6 +1,8 @@
 package com.lrh.blog.chat.utils;
 
+import cn.hutool.core.lang.UUID;
 import com.lrh.blog.common.domin.Message2;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,12 +22,10 @@ public class RabbitMqUtils {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    public void messageSend(String topic, Object message){
 
-    }
-
-    public void messageSend2(Message2 message2){
-        rabbitTemplate.convertAndSend("chat-exchange","chat",message2);
+    public void messageSend2(Message2 message2) {
+        message2.setId(UUID.randomUUID().toString());
+        rabbitTemplate.convertAndSend("chat-exchange", "chat", message2, new CorrelationData(message2.getId()));
     }
 
 

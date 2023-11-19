@@ -4,17 +4,21 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.mapper.BlogArticlesMapper;
+import com.lrh.blog.article.mapper.BlogSetArticleLabelMapper;
 import com.lrh.blog.article.mapper.BlogSetArticleSortMapper;
 import com.lrh.blog.article.mapper.BlogSortsMapper;
 import com.lrh.blog.article.service.BlogArticlesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lrh.blog.common.domin.Message;
 import com.lrh.blog.common.entity.BlogArticles;
+import com.lrh.blog.common.entity.BlogSetArticleLabel;
 import com.lrh.blog.common.entity.BlogSetArticleSort;
 import com.lrh.blog.common.entity.BlogSorts;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -38,6 +42,9 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
 
     @Autowired
     private BlogSetArticleSortMapper blogSetArticleSortMapper;
+
+    @Autowired
+    private BlogSetArticleLabelMapper blogSetArticleLabelMapper;
 
 
     @Override
@@ -83,8 +90,15 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
     }
 
     @Override
-    public Integer insertArticle(Long userId, String title, String content) {
-        Integer insert = blogArticlesMapper.insert(userId, title, content, LocalDateTime.now());
-        return insert;
+    @Transactional
+    public Integer insertArticle(Long userId, String title, String content, String labelId, String sortId) {
+        BlogArticles blogArticle = new BlogArticles(null, userId, title, content, 0L, 0L, LocalDateTime.now(), 0L);
+        Integer insertArticle = blogArticlesMapper.insertArticle(blogArticle);
+        log.info("blogArticle id : {}", blogArticle.getArticleId());
+        Integer insertArticleSort = blogSetArticleSortMapper.insert(new BlogSetArticleSort(blogArticle.getArticleId(), Long.parseLong(sortId)));
+        Integer insertArticleLabel = blogSetArticleLabelMapper.insert(new BlogSetArticleLabel(blogArticle.getArticleId(), Long.parseLong(labelId)));
+        return insertArticleSort + insertArticleLabel + insertArticle;
     }
+
+
 }

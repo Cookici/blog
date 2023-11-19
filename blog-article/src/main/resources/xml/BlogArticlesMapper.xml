@@ -3,9 +3,9 @@
 <mapper namespace="com.lrh.blog.article.mapper.BlogArticlesMapper">
 
 
-    <insert id="insert">
+    <insert id="insertArticle" useGeneratedKeys="true" keyProperty="articleId">
         insert into blog.blog_articles
-        values (null, #{userId}, #{articleTitle}, #{articleContent}, 0, 0, #{articleDate}, 0, 0)
+        values (null, #{blogArticles.userId}, #{blogArticles.articleTitle}, #{blogArticles.articleContent}, 0, 0, #{blogArticles.articleDate}, 0, 0)
     </insert>
 
 </mapper>

@@ -22,5 +22,5 @@ public interface BlogArticlesService extends IService<BlogArticles> {
 
     List<BlogArticles> getAllBlogArticlesById(Long id);
 
-    Integer insertArticle(Long userId, String title, String content);
+    Integer insertArticle(Long userId, String title, String content,String labelId,String sortId);
 }

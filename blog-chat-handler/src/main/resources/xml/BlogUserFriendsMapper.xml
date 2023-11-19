@@ -3,11 +3,4 @@
 <mapper namespace="com.lrh.blog.chathandler.mapper.BlogUserFriendsMapper">
 
 
-    <select id="getByUserIdAndFriendId">
-        select count(*)
-        from blog.blog_user_friends
-        where user_id = #{userId}
-          and user_friends_id = #{userFriendsId}
-    </select>
-
 </mapper>
