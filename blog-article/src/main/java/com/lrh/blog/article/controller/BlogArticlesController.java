@@ -11,6 +11,7 @@ import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -44,10 +45,10 @@ public class BlogArticlesController {
     private BlogSetArticleSortService blogSetArticleSortService;
 
     @GetMapping("/getAll/{sortName}/{index}")
-    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index) {
+    public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index, @RequestParam("item") String keyword) throws IOException {
         Map<String, Object> map = new HashMap<>();
         Page<BlogArticles> page = new Page<>(index, 5);
-        IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(sortName, page);
+        IPage<BlogArticles> allBlogArticles = blogArticlesService.getAllBlogArticles(sortName, page, keyword);
         List<BlogArticles> records = allBlogArticles.getRecords();
         if (records == null) {
             map.put("data", null);

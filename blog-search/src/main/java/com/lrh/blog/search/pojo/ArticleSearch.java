@@ -32,10 +32,10 @@ public class ArticleSearch implements Serializable {
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text , analyzer = "ik_smart")
+    @Field(type = FieldType.Text , analyzer = "ik_max_word")
     private String articleTitle;
 
-    @Field(type = FieldType.Text , analyzer = "ik_smart")
+    @Field(type = FieldType.Text , analyzer = "ik_max_word")
     private String articleContent;
 
 

@@ -4,10 +4,18 @@ import com.lrh.blog.search.mapper.ArticleSearchMapper;
 import com.lrh.blog.search.entity.BlogArticles;
 import com.lrh.blog.search.pojo.ArticleSearch;
 import com.lrh.blog.search.service.BlogArticlesService;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,14 +28,16 @@ import java.util.List;
  * @Date: 2023/11/19 20:27
  */
 @SpringBootTest
-public class InputTest {
+public class InputAndQueryTest {
+
+    @Autowired
+    private RestHighLevelClient restHighLevelClient;
 
     @Autowired
     private BlogArticlesService blogArticlesService;
 
     @Autowired
     private ArticleSearchMapper articleSearchMapper;
-
 
     @Test
     public void inputTest() {
@@ -41,6 +51,16 @@ public class InputTest {
             articleSearchList.add(articleSearch);
         }
         articleSearchMapper.saveAll(articleSearchList);
+    }
+
+    @Test
+    public void get() throws IOException {
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        MultiMatchQueryBuilder multiMatchQueryBuilder = QueryBuilders.multiMatchQuery("i lik", "articleTitle", "articleContent");
+        searchSourceBuilder.query(multiMatchQueryBuilder);
+        SearchRequest searchRequest = new SearchRequest("article");
+        SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+        System.out.println("searchRequest ---> " + searchResponse);
     }
 
 

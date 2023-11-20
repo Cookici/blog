@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lrh.blog.common.entity.BlogArticles;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 public interface BlogArticlesService extends IService<BlogArticles> {
 
-    IPage<BlogArticles> getAllBlogArticles(String sortId, Page<BlogArticles> page);
+    IPage<BlogArticles> getAllBlogArticles(String sortId, Page<BlogArticles> page,String keyword) throws IOException;
 
     List<BlogArticles> getAllBlogArticlesById(Long id);
 
