@@ -3,20 +3,17 @@ package com.lrh.blog.article.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.lrh.blog.article.mapper.BlogArticlesMapper;
-import com.lrh.blog.article.mapper.BlogSetArticleLabelMapper;
-import com.lrh.blog.article.mapper.BlogSetArticleSortMapper;
-import com.lrh.blog.article.mapper.BlogSortsMapper;
+import com.lrh.blog.article.mapper.*;
+import com.lrh.blog.article.service.BlogArticlesLikeService;
 import com.lrh.blog.article.service.BlogArticlesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lrh.blog.article.service.ElasticsearchService;
 import com.lrh.blog.common.domin.ArticleSearch2;
 import com.lrh.blog.common.domin.Message;
-import com.lrh.blog.common.entity.BlogArticles;
-import com.lrh.blog.common.entity.BlogSetArticleLabel;
-import com.lrh.blog.common.entity.BlogSetArticleSort;
-import com.lrh.blog.common.entity.BlogSorts;
+import com.lrh.blog.common.entity.*;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.utils.PageUtils;
+import com.lrh.blog.common.vo.BlogArticlesLikeVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +38,7 @@ import java.util.List;
 @Service
 public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, BlogArticles> implements BlogArticlesService {
 
+
     @Autowired
     private BlogArticlesMapper blogArticlesMapper;
 
@@ -53,10 +51,13 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
     @Autowired
     private ElasticsearchService elasticsearchService;
 
+    @Autowired
+    private BlogArticlesLikeMapper blogArticlesLikeMapper;
+
 
     @Override
     public IPage<BlogArticles> getAllBlogArticles(String sortId, Page<BlogArticles> page, String keyword) throws IOException {
-
+        PageUtils<BlogArticles> pageUtils = new PageUtils<>();
         if ("original".equals(sortId)) {
             if (keyword.trim().isEmpty()) {
                 return baseMapper.selectPage(page, new LambdaQueryWrapper<BlogArticles>().orderByDesc(BlogArticles::getArticleDate));
@@ -65,7 +66,7 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
             if (blogArticles == null) {
                 return page.setRecords(null);
             }
-            return getBlogArticlesIpage(page, blogArticles);
+            return pageUtils.getBlogArticlesIpage(page, blogArticles);
         }
         List<BlogSetArticleSort> blogSetArticleSorts = blogSetArticleSortMapper.selectList(new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getSortId, Long.parseLong(sortId)));
         if (blogSetArticleSorts.isEmpty()) {
@@ -78,7 +79,7 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
         List<BlogArticles> blogArticles = baseMapper.selectBatchIds(blogArticleIds);
         blogArticles.sort(Comparator.comparing(BlogArticles::getArticleDate).reversed());
         if (keyword.trim().isEmpty()) {
-            return getBlogArticlesIpage(page, blogArticles);
+            return pageUtils.getBlogArticlesIpage(page, blogArticles);
         }
         List<BlogArticles> searchList = getBlogArticles(keyword);
         if (searchList == null) {
@@ -88,7 +89,7 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
         if (blogArticles.isEmpty()) {
             return page.setRecords(null);
         }
-        return getBlogArticlesIpage(page, blogArticles);
+        return pageUtils.getBlogArticlesIpage(page, blogArticles);
     }
 
     private List<BlogArticles> getBlogArticles(String keyword) throws IOException {
@@ -102,33 +103,6 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
             idsList.add(search.getId());
         }
         return blogArticlesMapper.selectBatchIds(idsList);
-    }
-
-    private static IPage<BlogArticles> getBlogArticlesIpage(Page<BlogArticles> page, List<BlogArticles> blogArticles) {
-        long allDateSize = blogArticles.size();
-        long current = page.getCurrent();
-        long size = page.getSize();
-        long maxPage;
-        long start;
-        long end;
-        if ((allDateSize % size == 0)) {
-            if (allDateSize >= size) {
-                maxPage = allDateSize / size;
-            } else {
-                maxPage = 1;
-            }
-        } else {
-            maxPage = allDateSize / size + 1;
-        }
-        if (current >= maxPage) {
-            current = maxPage;
-            start = (current - 1) * size;
-            end = allDateSize;
-        } else {
-            start = (current - 1) * size;
-            end = start + size;
-        }
-        return page.setRecords(blogArticles.subList((int) start, (int) end)).setTotal(blogArticles.size()).setPages(maxPage);
     }
 
     @Override
@@ -148,6 +122,23 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
         log.info("articleSearch2 ---> {}", articleSearch2);
         elasticsearchService.addArticle(articleSearch2);
         return insertArticleSort + insertArticleLabel + insertArticle;
+    }
+
+    @Override
+    @Transactional
+    public Integer addLike(BlogArticlesLikeVo blogArticlesLikeVo) {
+        BlogArticles blogArticles = blogArticlesMapper.selectById(blogArticlesLikeVo.getArticleId());
+        long articleLikeCount = 0;
+        if (blogArticles.getArticleLikeCount() == null) {
+            articleLikeCount += 1;
+        } else {
+            articleLikeCount = blogArticles.getArticleLikeCount() + 1;
+        }
+        blogArticles.setArticleLikeCount(articleLikeCount);
+        int update = blogArticlesMapper.update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, blogArticlesLikeVo.getArticleId()));
+        LocalDateTime now = LocalDateTime.now();
+        int insert = blogArticlesLikeMapper.insert(new BlogArticlesLike(null, blogArticlesLikeVo.getArticleId(), blogArticlesLikeVo.getUserId(), now, now));
+        return update + insert;
     }
 
 
