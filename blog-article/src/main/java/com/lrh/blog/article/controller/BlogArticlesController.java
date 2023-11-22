@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.service.*;
 import com.lrh.blog.common.entity.*;
 import com.lrh.blog.common.result.Result;;
+import com.lrh.blog.common.vo.BlogArticlesLikeVo;
 import com.lrh.blog.common.vo.BlogArticlesVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -119,13 +120,10 @@ public class BlogArticlesController {
         return Result.ok(i);
     }
 
-    @PostMapping("/addLike/{articleId}")
-    public Result<Integer> addLike(@PathVariable("articleId") Long articleId) {
-        BlogArticles blogArticles = blogArticlesService.getBaseMapper().selectById(articleId);
-        long articleLikeCount = blogArticles.getArticleLikeCount() + 1;
-        blogArticles.setArticleLikeCount(articleLikeCount);
-        int update = blogArticlesService.getBaseMapper().update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, articleId));
-        return Result.ok(update);
+    @PutMapping("/addLike")
+    public Result<Integer> addLike(@RequestBody BlogArticlesLikeVo blogArticlesLikeVo) {
+        Integer i = blogArticlesService.addLike(blogArticlesLikeVo);
+        return Result.ok(i);
     }
 
 
@@ -161,6 +159,7 @@ public class BlogArticlesController {
         }
         return Result.ok(blogArticlesList);
     }
+
 
 }
 

@@ -56,8 +56,10 @@ public class BlogUsersController {
     public Result<BlogUsers> getBlogUser(@PathVariable("username") String username) {
         BlogUsers blogUsers = blogUsersService.selectUserByUsername(username);
         Duration duration = Duration.between(blogUsers.getUserRegistrationTime(), LocalDateTime.now());
-        System.out.println(duration.toDays());
-        long level = duration.toDays() / 10;
+        long level = duration.toDays() / 180;
+        if (level > 6) {
+            level = 6;
+        }
         blogUsers.setUserLevel(Math.toIntExact(level));
         blogUsersService.update(blogUsers, new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
         blogUsers.setUserPassword(null);
@@ -66,13 +68,16 @@ public class BlogUsersController {
 
     @GetMapping("/get")
     public Result<BlogUsers> getByUserName(@RequestParam String username) {
-        BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName,username));
+        BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
         return Result.ok(blogUsers);
     }
 
     @GetMapping("/getById")
     public Result<BlogUsers> getUserById(@RequestParam Long id) {
         BlogUsers blogUsers = blogUsersService.getById(id);
+        blogUsers.setUserTelephoneNumber(null);
+        blogUsers.setUserPassword(null);
+        blogUsers.setUserIp(null);
         return Result.ok(blogUsers);
     }
 
@@ -84,7 +89,7 @@ public class BlogUsersController {
     }
 
     @GetMapping("/getByUserName/{userName}")
-    public Result<BlogUsers> getById(@PathVariable String userName) {
+    public Result<BlogUsers> getByUsername(@PathVariable String userName) {
         BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, userName));
         if (blogUsers != null) {
             return Result.ok(blogUsers);
@@ -104,6 +109,7 @@ public class BlogUsersController {
         int i = blogUsersService.updateBackPhoto(blogPhotos);
         return Result.ok(i);
     }
+
 
 
 }

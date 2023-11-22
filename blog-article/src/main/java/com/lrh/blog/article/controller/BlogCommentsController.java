@@ -1,15 +1,25 @@
 package com.lrh.blog.article.controller;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.service.BlogCommentsService;
 import com.lrh.blog.common.domin.BlogComments2;
+import com.lrh.blog.common.domin.Reply;
+import com.lrh.blog.common.entity.BlogArticles;
+import com.lrh.blog.common.entity.BlogCommentLike;
 import com.lrh.blog.common.entity.BlogComments;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.utils.PageUtils;
+import com.lrh.blog.common.vo.BlogCommentLikeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,10 +37,18 @@ public class BlogCommentsController {
     @Autowired
     private BlogCommentsService blogCommentsService;
 
-    @GetMapping("/getAllComments/{articleId}")
-    public Result<List<BlogComments2>> getCommentsTree(@PathVariable("articleId") Long articleId) {
+    @GetMapping("/getAllComments/{articleId}/{pageNum}")
+    public Result<Map<String, Object>> getCommentsTree(@PathVariable("articleId") Long articleId, @PathVariable("pageNum") Integer pageNum) {
+        Map<String, Object> map = new HashMap<>();
+        Page<BlogComments2> page = new Page<>(pageNum, 5);
+        PageUtils<BlogComments2> pageUtils = new PageUtils<>();
         List<BlogComments2> tree = blogCommentsService.getCommentsTree(articleId);
-        return Result.ok(tree);
+        IPage<BlogComments2> blogComments2Ipage = pageUtils.getBlogArticlesIpage(page, tree);
+        map.put("comments",blogComments2Ipage.getRecords());
+        map.put("total",blogComments2Ipage.getTotal());
+        map.put("pageAll",blogComments2Ipage.getPages());
+
+        return Result.ok(map);
     }
 
     @PostMapping("/add/{articleId}")
@@ -53,11 +71,27 @@ public class BlogCommentsController {
         return Result.ok(save);
     }
 
-    @GetMapping("/total")
+    @GetMapping("/lastId")
     public Result<Long> commentsSize() {
-        List<BlogComments> list = blogCommentsService.list();
-        return Result.ok((long) list.size());
+        Long lastId = blogCommentsService.lastId();
+        return Result.ok(lastId);
     }
+
+    @PutMapping("/addLike")
+    private Result<Integer> addCommentLike(@RequestBody BlogCommentLikeVo blogCommentLikeVo) {
+        Integer i = blogCommentsService.addLike(blogCommentLikeVo);
+        return Result.ok(i);
+    }
+
+    @GetMapping("/page/{parentId}")
+    public Result<Reply> pageList(
+            @PathVariable("parentId") Long parentId
+    ) {
+        List<BlogComments2> allBlogArticles = blogCommentsService.getPageList(parentId);
+        Reply reply = new Reply(allBlogArticles);
+        return Result.ok(reply);
+    }
+
 
 }
 

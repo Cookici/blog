@@ -56,7 +56,7 @@ public class CodeGenerator {
         // 5、策略配置
         StrategyConfig strategy = new StrategyConfig();
 
-        strategy.setInclude("blog_comments");
+        strategy.setInclude("blog_comment_like");
 
         strategy.setNaming(NamingStrategy.underline_to_camel);//数据库表映射到实体的命名策略
 
