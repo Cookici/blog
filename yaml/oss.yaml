@@ -1,8 +1,8 @@
  spring:
   cloud: 
     alicloud:
-      access-key: LTAI5tKnfR71U6P4rARuiHeS
-      secret-key: ZOwg8bcku9hjYWRGzLxhrRIioUyoEx
+      access-key: 
+      secret-key: 
       oss:
-        endpoint: oss-cn-beijing.aliyuncs.com
-        bucket: lrh-blog-project.oss-cn-beijing.aliyuncs.com
+        endpoint: 
+        bucket: 
