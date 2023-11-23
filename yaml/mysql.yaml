@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.29.200:3306/blog
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: root
