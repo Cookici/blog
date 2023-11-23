@@ -190,13 +190,13 @@ public class BlogArticlesController {
     }
 
     @DeleteMapping("/delete/{articleId}/{userName}")
-    public Result<Boolean> deleteArticle(@PathVariable("articleId") Long articleId, HttpServletRequest httpServletRequest, @PathVariable String userName) {
+    public Result<Integer> deleteArticle(@PathVariable("articleId") Long articleId, HttpServletRequest httpServletRequest, @PathVariable String userName) {
 
         if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
-            return Result.fail(false).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
         }
 
-        boolean removeById = blogArticlesService.removeById(articleId);
+        Integer removeById = blogArticlesService.removeArticleById(articleId);
         return Result.ok(removeById);
     }
 

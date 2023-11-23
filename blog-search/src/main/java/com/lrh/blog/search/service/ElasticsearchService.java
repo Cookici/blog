@@ -20,4 +20,8 @@ public interface ElasticsearchService {
     List<ArticleSearch2> queryArticle(String item) throws IOException;
 
     void add(ArticleSearch2 articleSearch2);
+
+    void update(ArticleSearch2 articleSearch2) throws IOException;
+
+    void delete(Long id) throws IOException;
 }

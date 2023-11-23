@@ -172,11 +172,25 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
         BlogSetArticleSort blogSetArticleSort = blogSetArticleSortMapper.selectOne(new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, articleId));
         blogSetArticleSort.setSortId(Long.valueOf(blogArticlesVo.getSortId()));
         int update2 = blogSetArticleSortMapper.update(blogSetArticleSort, new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, articleId));
-
+        try {
+            elasticsearchService.updateArticle(new ArticleSearch2(articleId, blogArticlesVo.getTitle(), blogArticles.getArticleContent()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return update + update1 + update2;
     }
 
-
+    @Override
+    @Transactional
+    public Integer removeArticleById(Long articleId) {
+        int i = baseMapper.deleteById(articleId);
+        try {
+            elasticsearchService.deleteArticle(articleId);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return i;
+    }
 
 
 }

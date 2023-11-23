@@ -1,12 +1,13 @@
 package com.lrh.blog.search.service.impl;
 
-import com.alibaba.druid.sql.builder.UpdateBuilder;
+
 import com.alibaba.fastjson2.JSON;
 import com.lrh.blog.common.domin.ArticleSearch2;
 import com.lrh.blog.search.pojo.ArticleSearch;
 import com.lrh.blog.search.service.ElasticsearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.ActionListener;
+import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
@@ -16,19 +17,18 @@ import org.elasticsearch.action.support.replication.ReplicationResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.reindex.DeleteByQueryRequest;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @ProjectName: Blog
@@ -88,10 +88,33 @@ public class ElasticsearchServiceImpl implements ElasticsearchService {
                     }
                 }
             }
+
             @Override
             public void onFailure(Exception e) {
                 log.error("{}:存储es时异常，数据信息为", indexRequest.id(), e);
             }
         });
+    }
+
+    @Override
+    public void update(ArticleSearch2 articleSearch2) throws IOException {
+        UpdateByQueryRequest updateByQueryRequest = new UpdateByQueryRequest();
+        updateByQueryRequest.setConflicts("proceed");
+        updateByQueryRequest.setRefresh(true);
+        updateByQueryRequest.indices("article");
+        updateByQueryRequest.setQuery(new TermQueryBuilder("id", articleSearch2.getId()));
+        Map<String, Object> map = new HashMap<>();
+        map.put("articleTitle", articleSearch2.getArticleTitle());
+        map.put("articleContent", articleSearch2.getArticleContent());
+        updateByQueryRequest.setScript(new Script(ScriptType.INLINE, "painless",
+                "ctx._source.articleTitle ='" + articleSearch2.getArticleTitle() + "';" + "ctx._source.articleContent='" + articleSearch2.getArticleContent() + "';", Collections.emptyMap()));
+        restHighLevelClient.updateByQuery(updateByQueryRequest, RequestOptions.DEFAULT);
+    }
+
+    @Override
+    public void delete(Long id) throws IOException {
+        DeleteByQueryRequest deleteByQueryRequest = new DeleteByQueryRequest("article");
+        deleteByQueryRequest.setQuery(QueryBuilders.termQuery("id", id));
+        restHighLevelClient.deleteByQuery(deleteByQueryRequest, RequestOptions.DEFAULT);
     }
 }

@@ -49,6 +49,18 @@ public class ElasticsearchController {
         return Result.ok();
     }
 
+    @PutMapping("/update/article")
+    public Result<Void> updateArticle(@RequestBody ArticleSearch2 articleSearch2) throws IOException {
+        elasticsearchService.update(articleSearch2);
+        return Result.ok();
+    }
+
+    @DeleteMapping ("/delete/article")
+    public Result<Void> deleteArticle(@RequestParam("articleId") Long articleId) throws IOException {
+        elasticsearchService.delete(articleId);
+        return Result.ok();
+    }
+
 
 }
 

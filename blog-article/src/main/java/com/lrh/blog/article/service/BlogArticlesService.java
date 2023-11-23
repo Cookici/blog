@@ -33,4 +33,6 @@ public interface BlogArticlesService extends IService<BlogArticles> {
     Map<String, Object> getLabelAndSort(Long articleId);
 
     Integer updateArticle(BlogArticlesVo blogArticlesVo, Long articleId);
+
+    Integer removeArticleById(Long articleId);
 }
