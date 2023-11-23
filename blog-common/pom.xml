@@ -19,6 +19,12 @@
 
 
     <dependencies>
+        <!-- jwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
         <!-- hutool工具类-->
         <dependency>
             <groupId>cn.hutool</groupId>

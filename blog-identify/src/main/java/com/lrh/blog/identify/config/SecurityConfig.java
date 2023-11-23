@@ -52,7 +52,7 @@ public class SecurityConfig {
     private JwtLogoutSuccessHandler jwtLogoutSuccessHandler;
 
     @Autowired
-    SecurityRepository securityRepository;
+    private SecurityRepository securityRepository;
 
 
     @Bean

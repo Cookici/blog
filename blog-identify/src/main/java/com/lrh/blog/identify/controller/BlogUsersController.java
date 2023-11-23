@@ -63,12 +63,17 @@ public class BlogUsersController {
         blogUsers.setUserLevel(Math.toIntExact(level));
         blogUsersService.update(blogUsers, new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
         blogUsers.setUserPassword(null);
+        blogUsers.setUserIp(null);
+        blogUsers.setUserTelephoneNumber(null);
         return Result.ok(blogUsers);
     }
 
     @GetMapping("/get")
     public Result<BlogUsers> getByUserName(@RequestParam String username) {
         BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, username));
+        blogUsers.setUserPassword(null);
+        blogUsers.setUserIp(null);
+        blogUsers.setUserTelephoneNumber(null);
         return Result.ok(blogUsers);
     }
 
@@ -85,6 +90,11 @@ public class BlogUsersController {
     @GetMapping("/getByIds")
     public Result<List<BlogUsers>> getByIds(@RequestParam("ids") List<Long> ids) {
         List<BlogUsers> blogUsers = blogUsersService.selectUsersByIds(ids);
+        for (BlogUsers blogUser : blogUsers) {
+            blogUser.setUserPassword(null);
+            blogUser.setUserIp(null);
+            blogUser.setUserTelephoneNumber(null);
+        }
         return Result.ok(blogUsers);
     }
 
@@ -92,6 +102,9 @@ public class BlogUsersController {
     public Result<BlogUsers> getByUsername(@PathVariable String userName) {
         BlogUsers blogUsers = blogUsersService.getOne(new LambdaQueryWrapper<BlogUsers>().eq(BlogUsers::getUserName, userName));
         if (blogUsers != null) {
+            blogUsers.setUserPassword(null);
+            blogUsers.setUserIp(null);
+            blogUsers.setUserTelephoneNumber(null);
             return Result.ok(blogUsers);
         }
         return Result.fail();

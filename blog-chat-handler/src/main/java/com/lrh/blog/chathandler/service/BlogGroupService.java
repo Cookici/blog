@@ -2,6 +2,9 @@ package com.lrh.blog.chathandler.service;
 
 import com.lrh.blog.common.entity.BlogGroup;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.lrh.blog.common.entity.BlogUsers;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface BlogGroupService extends IService<BlogGroup> {
 
+    List<BlogUsers> getUsersByGroupId(Long groupId);
+
+    Integer deleteGroup(Long groupId);
 }

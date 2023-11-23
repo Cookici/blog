@@ -5,10 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.lrh.blog.common.entity.BlogArticles;
 import com.lrh.blog.common.vo.BlogArticlesLikeVo;
+import com.lrh.blog.common.vo.BlogArticlesVo;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,4 +29,8 @@ public interface BlogArticlesService extends IService<BlogArticles> {
     Integer insertArticle(Long userId, String title, String content,String labelId,String sortId);
 
     Integer addLike(BlogArticlesLikeVo blogArticlesLikeVo);
+
+    Map<String, Object> getLabelAndSort(Long articleId);
+
+    Integer updateArticle(BlogArticlesVo blogArticlesVo, Long articleId);
 }

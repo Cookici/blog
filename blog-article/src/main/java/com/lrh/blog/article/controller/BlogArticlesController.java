@@ -5,13 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.service.*;
+import com.lrh.blog.article.utils.JudgeRightUtils;
+import com.lrh.blog.article.utils.JwtUtils;
 import com.lrh.blog.common.entity.*;
 import com.lrh.blog.common.result.Result;;
+import com.lrh.blog.common.result.ResultCodeEnum;
 import com.lrh.blog.common.vo.BlogArticlesLikeVo;
 import com.lrh.blog.common.vo.BlogArticlesVo;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.*;
 
@@ -44,6 +49,9 @@ public class BlogArticlesController {
 
     @Autowired
     private BlogSetArticleSortService blogSetArticleSortService;
+
+    @Autowired
+    private JudgeRightUtils judgeRightUtils;
 
     @GetMapping("/getAll/{sortName}/{index}")
     public Result<Map<String, Object>> getAllBlogArticles(@PathVariable("sortName") String sortName, @PathVariable Integer index, @RequestParam("item") String keyword) throws IOException {
@@ -97,14 +105,19 @@ public class BlogArticlesController {
     public Result<Map<String, Object>> getUserByArticleId(@PathVariable("id") Long id) {
 
         List<BlogArticles> allBlogArticlesById = blogArticlesService.getAllBlogArticlesById(id);
+        allBlogArticlesById.sort(Comparator.comparing(BlogArticles::getArticleDate).reversed());
+        Result<BlogUsers> userById = blogUsersServer.getUserById(id);
+        BlogUsers blogUsers = userById.getData();
         Long likes = 0L;
         Long views = 0L;
         for (BlogArticles blogArticles : allBlogArticlesById) {
             likes += blogArticles.getArticleLikeCount();
             views += blogArticles.getArticleViews();
+            blogArticles.setBlogUsers(blogUsers);
         }
 
         Map<String, Object> map = new HashMap<>();
+        map.put("user", blogUsers);
         map.put("articleList", allBlogArticlesById);
         map.put("articleNumber", allBlogArticlesById.size());
         map.put("like", likes);
@@ -158,6 +171,33 @@ public class BlogArticlesController {
             }
         }
         return Result.ok(blogArticlesList);
+    }
+
+
+    @GetMapping("/get/labelAndSort/{articleId}")
+    public Result<Map<String, Object>> getLabelAndSort(@PathVariable("articleId") Long articleId) {
+        Map<String, Object> result = blogArticlesService.getLabelAndSort(articleId);
+        return Result.ok(result);
+    }
+
+    @PutMapping("/update/{articleId}/{userName}")
+    public Result<Integer> updateArticle(@RequestBody BlogArticlesVo blogArticlesVo, @PathVariable("articleId") Long articleId, @PathVariable String userName, HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
+        Integer i = blogArticlesService.updateArticle(blogArticlesVo, articleId);
+        return Result.ok(i);
+    }
+
+    @DeleteMapping("/delete/{articleId}/{userName}")
+    public Result<Boolean> deleteArticle(@PathVariable("articleId") Long articleId, HttpServletRequest httpServletRequest, @PathVariable String userName) {
+
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(false).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
+
+        boolean removeById = blogArticlesService.removeById(articleId);
+        return Result.ok(removeById);
     }
 
 

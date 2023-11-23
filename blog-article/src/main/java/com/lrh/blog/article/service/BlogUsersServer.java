@@ -25,4 +25,6 @@ public interface BlogUsersServer {
     @GetMapping("/blog/identify/getByIds")
     Result<List<BlogUsers>> getByIds(@RequestParam("ids")List<Long> ids);
 
+    @GetMapping("/blog/identify/getById")
+    public Result<BlogUsers> getUserById(@RequestParam Long id);
 }

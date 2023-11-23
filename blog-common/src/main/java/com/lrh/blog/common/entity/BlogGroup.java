@@ -3,9 +3,11 @@ package com.lrh.blog.common.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+
 import java.io.Serializable;
 import java.util.List;
 
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author lrh
@@ -49,6 +51,5 @@ public class BlogGroup implements Serializable {
      * 用户们id
      */
     private String usersId;
-
 
 }

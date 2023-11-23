@@ -1,14 +1,17 @@
 package com.lrh.blog.chathandler.controller;
 
 
+import com.lrh.blog.chathandler.utils.JudgeRightUtils;
 import com.lrh.blog.common.entity.BlogUserFriends;
 import com.lrh.blog.chathandler.service.BlogUserFriendsService;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.result.ResultCodeEnum;
 import com.lrh.blog.common.vo.BlogUserFriendsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -26,6 +29,8 @@ public class BlogUserFriendsController {
     @Autowired
     private BlogUserFriendsService blogUserFriendsService;
 
+    @Autowired
+    private JudgeRightUtils judgeRightUtils;
 
     @PostMapping("/agree")
     public Result<Integer> agree(@RequestBody BlogUserFriendsVo blogUserFriendsVo) {
@@ -52,14 +57,21 @@ public class BlogUserFriendsController {
     }
 
     @GetMapping("/getFriend/{friendId}")
-    public Result<BlogUsers> getFriendById(@PathVariable("friendId")Long friendId){
+    public Result<BlogUsers> getFriendById(@PathVariable("friendId") Long friendId) {
         BlogUsers blogUsers = blogUserFriendsService.getFriend(friendId);
         blogUsers.setUserPassword(null);
         blogUsers.setUserTelephoneNumber(null);
         return Result.ok(blogUsers);
     }
 
-
+    @DeleteMapping("/delete/{userName}")
+    public Result<Integer> deleteFriend(@RequestBody BlogUserFriendsVo blogUserFriendsVo, @PathVariable String userName, HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
+        Integer i = blogUserFriendsService.deleteFriend(blogUserFriendsVo);
+        return Result.ok(i);
+    }
 
 
 }

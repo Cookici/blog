@@ -3,11 +3,13 @@ package com.lrh.blog.chathandler.controller;
 import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.lrh.blog.chathandler.service.BlogUsersServer;
+import com.lrh.blog.chathandler.utils.JudgeRightUtils;
 import com.lrh.blog.chathandler.utils.RedisUtils;
 import com.lrh.blog.common.entity.BlogGroup;
 import com.lrh.blog.chathandler.service.BlogGroupService;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.result.ResultCodeEnum;
 import com.lrh.blog.common.utils.RedisPrefixUtils;
 import com.lrh.blog.common.vo.BlogGroupVo;
 import com.lrh.blog.common.vo.BlogPhotoVo;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -39,6 +42,9 @@ public class BlogGroupController {
 
     @Autowired
     private RedisUtils redisUtils;
+
+    @Autowired
+    private JudgeRightUtils judgeRightUtils;
 
 
     @PostMapping("/create")
@@ -94,7 +100,28 @@ public class BlogGroupController {
             result.put(String.valueOf(blogGroup.getGroupId()), (long) sizeForGroupNoReadMessage);
         }
         return Result.ok(result);
+
+
     }
 
+    @GetMapping("/getGroupUser/{groupId}")
+    public Result<Map<Long, String>> getGroupUser(@PathVariable("groupId") Long groupId) {
+        List<BlogUsers> blogUsers = blogGroupService.getUsersByGroupId(groupId);
+        Map<Long, String> result = new HashMap<>();
+        for (BlogUsers blogUser : blogUsers) {
+            result.put(blogUser.getUserId(), blogUser.getUserNickname());
+        }
+        return Result.ok(result);
+    }
+
+
+    @DeleteMapping("/deleteGroup/{groupId}/{userName}")
+    public Result<Integer> deleteGroup(@PathVariable("groupId") Long groupId, @PathVariable String userName, HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
+        Integer i = blogGroupService.deleteGroup(groupId);
+        return Result.ok(i);
+    }
 
 }

@@ -7,6 +7,7 @@ import com.lrh.blog.article.mapper.*;
 import com.lrh.blog.article.service.BlogArticlesLikeService;
 import com.lrh.blog.article.service.BlogArticlesService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.lrh.blog.article.service.BlogSortsService;
 import com.lrh.blog.article.service.ElasticsearchService;
 import com.lrh.blog.common.domin.ArticleSearch2;
 import com.lrh.blog.common.domin.Message;
@@ -14,6 +15,7 @@ import com.lrh.blog.common.entity.*;
 import com.lrh.blog.common.result.Result;
 import com.lrh.blog.common.utils.PageUtils;
 import com.lrh.blog.common.vo.BlogArticlesLikeVo;
+import com.lrh.blog.common.vo.BlogArticlesVo;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -47,6 +47,9 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
 
     @Autowired
     private BlogSetArticleLabelMapper blogSetArticleLabelMapper;
+
+    @Autowired
+    private BlogSortsService blogSortsService;
 
     @Autowired
     private ElasticsearchService elasticsearchService;
@@ -140,6 +143,40 @@ public class BlogArticlesServiceImpl extends ServiceImpl<BlogArticlesMapper, Blo
         int insert = blogArticlesLikeMapper.insert(new BlogArticlesLike(null, blogArticlesLikeVo.getArticleId(), blogArticlesLikeVo.getUserId(), now, now));
         return update + insert;
     }
+
+    @Override
+    public Map<String, Object> getLabelAndSort(Long articleId) {
+        BlogSetArticleLabel blogSetArticleLabel = blogSetArticleLabelMapper.selectOne(new LambdaQueryWrapper<BlogSetArticleLabel>().eq(BlogSetArticleLabel::getArticleId, articleId));
+        BlogSetArticleSort blogSetArticleSort = blogSetArticleSortMapper.selectOne(new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, articleId));
+        BlogSorts blogSorts = blogSortsService.getOne(new LambdaQueryWrapper<BlogSorts>().eq(BlogSorts::getSortId, blogSetArticleSort.getSortId()));
+        Map<String, Object> map = new HashMap<>();
+        map.put("labelId", blogSetArticleLabel.getLabelId());
+        map.put("sortId", blogSetArticleSort.getSortId());
+        map.put("sortParentId", blogSorts.getParentSortId());
+        return map;
+    }
+
+    @Override
+    @Transactional
+    public Integer updateArticle(BlogArticlesVo blogArticlesVo, Long articleId) {
+        BlogArticles blogArticles = blogArticlesMapper.selectById(articleId);
+        blogArticles.setArticleDate(LocalDateTime.now());
+        blogArticles.setArticleTitle(blogArticlesVo.getTitle());
+        blogArticles.setArticleContent(blogArticlesVo.getContent());
+        int update = blogArticlesMapper.update(blogArticles, new LambdaQueryWrapper<BlogArticles>().eq(BlogArticles::getArticleId, articleId));
+
+        BlogSetArticleLabel blogSetArticleLabel = blogSetArticleLabelMapper.selectOne(new LambdaQueryWrapper<BlogSetArticleLabel>().eq(BlogSetArticleLabel::getArticleId, articleId));
+        blogSetArticleLabel.setLabelId(Long.valueOf(blogArticlesVo.getLabelId()));
+        int update1 = blogSetArticleLabelMapper.update(blogSetArticleLabel, new LambdaQueryWrapper<BlogSetArticleLabel>().eq(BlogSetArticleLabel::getArticleId, articleId));
+
+        BlogSetArticleSort blogSetArticleSort = blogSetArticleSortMapper.selectOne(new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, articleId));
+        blogSetArticleSort.setSortId(Long.valueOf(blogArticlesVo.getSortId()));
+        int update2 = blogSetArticleSortMapper.update(blogSetArticleSort, new LambdaQueryWrapper<BlogSetArticleSort>().eq(BlogSetArticleSort::getArticleId, articleId));
+
+        return update + update1 + update2;
+    }
+
+
 
 
 }

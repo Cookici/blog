@@ -27,4 +27,6 @@ public interface BlogUserFriendsService extends IService<BlogUserFriends> {
     List<BlogUsers> getFriendList(Long userId);
 
     BlogUsers getFriend(Long friendId);
+
+    Integer deleteFriend(BlogUserFriendsVo blogUserFriendsVo);
 }

@@ -9,6 +9,8 @@ import com.lrh.blog.chathandler.service.BlogUserFriendsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lrh.blog.common.entity.BlogUsers;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.utils.RedisPrefix;
+import com.lrh.blog.common.utils.RedisPrefixUtils;
 import com.lrh.blog.common.vo.BlogUserFriendsVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +106,23 @@ public class BlogUserFriendsServiceImpl extends ServiceImpl<BlogUserFriendsMappe
     public BlogUsers getFriend(Long friendId) {
         Result<BlogUsers> userById = blogUsersServer.getUserById(friendId);
         return userById.getData();
+    }
+
+    @Override
+    @Transactional
+    public Integer deleteFriend(BlogUserFriendsVo blogUserFriendsVo) {
+        int delete = blogUserFriendsMapper.delete(new LambdaQueryWrapper<BlogUserFriends>().eq(BlogUserFriends::getUserId, blogUserFriendsVo.getUserId()).eq(BlogUserFriends::getUserFriendsId, blogUserFriendsVo.getFriendId()));
+        int delete1 = blogUserFriendsMapper.delete(new LambdaQueryWrapper<BlogUserFriends>().eq(BlogUserFriends::getUserId, blogUserFriendsVo.getFriendId()).eq(BlogUserFriends::getUserFriendsId, blogUserFriendsVo.getUserId()));
+        if (redisUtils.hasKey(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.SINGLE_CHAT_ONLINE).toString())) {
+            redisUtils.del(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.SINGLE_CHAT_ONLINE).toString());
+        }
+        if (redisUtils.hasKey(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.SINGLE_CHAT_OFFLINE).toString())) {
+            redisUtils.del(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.SINGLE_CHAT_OFFLINE).toString());
+        }
+        if (redisUtils.hasKey(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.RED_POINT).toString())) {
+            redisUtils.del(RedisPrefixUtils.getStringBuilder(String.valueOf(blogUserFriendsVo.getUserId()), String.valueOf(blogUserFriendsVo.getFriendId()), RedisPrefix.RED_POINT).toString());
+        }
+        return delete + delete1;
     }
 
 }

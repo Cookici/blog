@@ -144,14 +144,14 @@ public class RedisMessageController {
 
     @PutMapping("/redPoint/group/clear")
     public Result<String> clearGroupRedPoint(@RequestBody GroupUserVo groupUserVo) {
-        redisUtils.del(RedisPrefix.RED_POINT + groupUserVo.getUserId() + "-group:" + groupUserVo.getGroupId());
+        redisUtils.del(RedisPrefix.RED_POINT + groupUserVo.getUserId() + "-group" + groupUserVo.getGroupId());
         return Result.ok("clear");
     }
 
 
     @GetMapping("/redPoint/group/add/{userId}/{groupId}")
     public Result<Map<Long, Integer>> addGroupRedPoint(@PathVariable("userId") String userId, @PathVariable("groupId") String groupId) {
-        String string = RedisPrefix.RED_POINT + userId + "-group:" + groupId;
+        String string = RedisPrefix.RED_POINT + userId + "-group" + groupId;
         if (!redisUtils.hasKey(string)) {
             redisUtils.set(string, 1);
         } else {
@@ -160,8 +160,8 @@ public class RedisMessageController {
         List<BlogGroup> groupList = blogGroupService.list(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getUserId, userId));
         Map<Long, Integer> result = new HashMap<>();
         for (BlogGroup blogGroup : groupList) {
-            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId()) != null) {
-                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId());
+            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group" + blogGroup.getGroupId()) != null) {
+                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group" + blogGroup.getGroupId());
                 result.put(blogGroup.getGroupId(), Integer.valueOf(object.toString()));
             } else {
                 result.put(blogGroup.getGroupId(), 0);
@@ -176,8 +176,8 @@ public class RedisMessageController {
         List<BlogGroup> groupList = blogGroupService.list(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getUserId, userId));
         Map<Long, Integer> result = new HashMap<>();
         for (BlogGroup blogGroup : groupList) {
-            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId()) != null) {
-                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group:" + blogGroup.getGroupId());
+            if (redisUtils.get(RedisPrefix.RED_POINT + userId + "-group" + blogGroup.getGroupId()) != null) {
+                Object object = redisUtils.get(RedisPrefix.RED_POINT + userId + "-group" + blogGroup.getGroupId());
                 result.put(blogGroup.getGroupId(), Integer.valueOf(object.toString()));
             } else {
                 result.put(blogGroup.getGroupId(), 0);

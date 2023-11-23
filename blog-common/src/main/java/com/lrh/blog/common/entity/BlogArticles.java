@@ -3,6 +3,7 @@ package com.lrh.blog.common.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -67,6 +68,9 @@ public class BlogArticles implements Serializable {
      * 点赞数
      */
     private Long articleLikeCount;
+
+    @TableLogic(value = "0",delval = "1")
+    private Integer deleted;
 
     @TableField(exist = false)
     private BlogUsers blogUsers;

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,10 +44,16 @@ public class BlogCommentsController {
         Page<BlogComments2> page = new Page<>(pageNum, 5);
         PageUtils<BlogComments2> pageUtils = new PageUtils<>();
         List<BlogComments2> tree = blogCommentsService.getCommentsTree(articleId);
+        if (tree == null) {
+            map.put("comments", new ArrayList<BlogComments2>());
+            map.put("total", 0);
+            map.put("pageAll", 0);
+            return Result.ok(map);
+        }
         IPage<BlogComments2> blogComments2Ipage = pageUtils.getBlogArticlesIpage(page, tree);
-        map.put("comments",blogComments2Ipage.getRecords());
-        map.put("total",blogComments2Ipage.getTotal());
-        map.put("pageAll",blogComments2Ipage.getPages());
+        map.put("comments", blogComments2Ipage.getRecords());
+        map.put("total", blogComments2Ipage.getTotal());
+        map.put("pageAll", blogComments2Ipage.getPages());
 
         return Result.ok(map);
     }
