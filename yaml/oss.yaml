@@ -1,16 +1,9 @@
  spring:
   cloud: 
     alicloud:
-<<<<<<< HEAD
       access-key:
       secret-key:
       oss:
         endpoint:
         bucket:
-=======
-      access-key: 
-      secret-key: 
-      oss:
-        endpoint: 
-        bucket: 
->>>>>>> 614a52e9071f954e13e5ba9be48bb65ee84b0caa
+
