@@ -164,6 +164,7 @@ Blog
 <img src="./img/7.png">
 <img src="./img/8.png">
 <img src="./img/9.png">
+<img src="./img/10.png">
 
 <!-- links -->
 
