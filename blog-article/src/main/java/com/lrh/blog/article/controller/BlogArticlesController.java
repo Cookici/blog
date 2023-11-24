@@ -127,8 +127,11 @@ public class BlogArticlesController {
     }
 
 
-    @PostMapping("/create/{userId}")
-    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo) {
+    @PostMapping("/create/{userId}/{userName}")
+    public Result<Integer> createArticle(@PathVariable("userId") Long userId, @RequestBody BlogArticlesVo blogArticlesVo, @PathVariable String userName,HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
         Integer i = blogArticlesService.insertArticle(userId, blogArticlesVo.getTitle(), blogArticlesVo.getContent(), blogArticlesVo.getLabelId(), blogArticlesVo.getSortId());
         return Result.ok(i);
     }

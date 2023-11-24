@@ -4,18 +4,21 @@ package com.lrh.blog.article.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lrh.blog.article.service.BlogCommentsService;
+import com.lrh.blog.article.utils.JudgeRightUtils;
 import com.lrh.blog.common.domin.BlogComments2;
 import com.lrh.blog.common.domin.Reply;
 import com.lrh.blog.common.entity.BlogArticles;
 import com.lrh.blog.common.entity.BlogCommentLike;
 import com.lrh.blog.common.entity.BlogComments;
 import com.lrh.blog.common.result.Result;
+import com.lrh.blog.common.result.ResultCodeEnum;
 import com.lrh.blog.common.utils.PageUtils;
 import com.lrh.blog.common.vo.BlogCommentLikeVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +41,9 @@ public class BlogCommentsController {
     @Autowired
     private BlogCommentsService blogCommentsService;
 
+    @Autowired
+    private JudgeRightUtils judgeRightUtils;
+
     @GetMapping("/getAllComments/{articleId}/{pageNum}")
     public Result<Map<String, Object>> getCommentsTree(@PathVariable("articleId") Long articleId, @PathVariable("pageNum") Integer pageNum) {
         Map<String, Object> map = new HashMap<>();
@@ -58,8 +64,11 @@ public class BlogCommentsController {
         return Result.ok(map);
     }
 
-    @PostMapping("/add/{articleId}")
-    public Result<Boolean> addComments(@RequestBody BlogComments2 blogComments2, @PathVariable("articleId") Long articleId) {
+    @PostMapping("/add/{articleId}/{userName}")
+    public Result<Boolean> addComments(@RequestBody BlogComments2 blogComments2, @PathVariable("articleId") Long articleId, @PathVariable String userName, HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(false).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
         log.info("blogComments2 ---> {}", blogComments2);
         BlogComments blogComments = new BlogComments();
         blogComments.setCommentId(null);

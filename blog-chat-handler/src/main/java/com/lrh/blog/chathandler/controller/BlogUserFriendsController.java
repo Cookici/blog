@@ -32,8 +32,11 @@ public class BlogUserFriendsController {
     @Autowired
     private JudgeRightUtils judgeRightUtils;
 
-    @PostMapping("/agree")
-    public Result<Integer> agree(@RequestBody BlogUserFriendsVo blogUserFriendsVo) {
+    @PostMapping("/agree/{userName}")
+    public Result<Integer> agree(@RequestBody BlogUserFriendsVo blogUserFriendsVo, @PathVariable String userName, HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
         Integer i = blogUserFriendsService.addFriend(blogUserFriendsVo);
         return Result.ok(i);
     }
@@ -44,8 +47,11 @@ public class BlogUserFriendsController {
         return Result.ok(judge);
     }
 
-    @PutMapping("/reject")
-    public Result<Integer> reject(@RequestBody BlogUserFriendsVo blogUserFriendsVo) {
+    @PutMapping("/reject/{userName}")
+    public Result<Integer> reject(@RequestBody BlogUserFriendsVo blogUserFriendsVo, @PathVariable String userName,HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(0).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
         Integer i = blogUserFriendsService.rejectApply(blogUserFriendsVo);
         return Result.ok(i);
     }

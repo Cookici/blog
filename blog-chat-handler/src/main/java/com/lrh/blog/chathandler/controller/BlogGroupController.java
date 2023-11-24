@@ -47,8 +47,12 @@ public class BlogGroupController {
     private JudgeRightUtils judgeRightUtils;
 
 
-    @PostMapping("/create")
-    public Result<Boolean> createGroup(@RequestBody BlogGroupVo blogGroupVo) {
+    @PostMapping("/create/{userName}")
+    public Result<Boolean> createGroup(@RequestBody BlogGroupVo blogGroupVo, @PathVariable String userName,HttpServletRequest httpServletRequest) {
+        if (!judgeRightUtils.judgeRight(userName, httpServletRequest)) {
+            return Result.fail(false).message("没有权限").code(ResultCodeEnum.NO_RIGHT.getCode());
+        }
+
         List<BlogGroup> judge = blogGroupService.list(new LambdaQueryWrapper<BlogGroup>().eq(BlogGroup::getUsersId, JSON.toJSONString(blogGroupVo.getIds())));
         if (!judge.isEmpty()) {
             return Result.ok(false);
