@@ -6,7 +6,6 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]]
 
 
 <!-- PROJECT LOGO -->
