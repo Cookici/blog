@@ -74,6 +74,8 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 
 
 ### 文件目录说明
+
+```
 Blog
 ├── blog-article
 ├── blog-chat-handler
@@ -86,6 +88,7 @@ Blog
 ├── yaml
 ├── README.md
 └── pom.xml
+```
 
 1. blog-article文章相关功能
 2. blog-chat-handler使用Redis处理聊天消息
