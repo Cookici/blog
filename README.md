@@ -60,7 +60,6 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 ### 上手指南
     需要一定的硬件配置以及编程基础
 
-<br /><br /><br />
 
 
 ###### 开发前的环境配置
@@ -71,7 +70,6 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 5. Docker(可选择搭建在本地)
 
 
-<br /><br /><br />
 
 ###### **搭建步骤**
 虚拟机环境Centos7（Docker：nacos、redis、mysql、elasticsearch）以及Centos8（RabbitMQ）
