@@ -34,6 +34,8 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 本篇README.md面向开发者
 
 
+
+
 ## 目录
 
 - [上手指南](#上手指南)
@@ -52,8 +54,12 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 - [Blog-Vue3前端项目](#Blog-Vue3前端项目)
 - [项目展示](#项目展示)
 
+
+
 ### 上手指南
     需要一定的硬件配置以及编程基础
+
+
 
 
 ###### 开发前的环境配置
@@ -64,6 +70,8 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 5. Docker(可选择搭建在本地)
 
 
+
+
 ###### **搭建步骤**
 虚拟机环境Centos7（Docker：nacos、redis、mysql、elasticsearch）以及Centos8（RabbitMQ）
 1. 搭建nacos
@@ -71,6 +79,8 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 3. 搭建mysql
 4. 搭建elasticsearch
 5. 搭建RabbitMQ
+
+
 
 
 ### 文件目录说明
@@ -101,8 +111,12 @@ Blog
 9. yaml包含nacos配置中心的所有yaml配置文件
 
 
+
+
 ### 开发的架构
 项目主要使用SpringCloud微服务架构，每个微服务使用MVC架构
+
+
 
 
 ### 使用到的框架
@@ -115,16 +129,24 @@ Blog
 - MyBatis-Plus
 
 
+
+
 ### 贡献者
 当然只有我一个人咯😭😭😭
+
+
 
 
 #### 如何参与开源项目
 贡献使开源社区成为一个学习、激励和创造的绝佳场所。你所作的任何贡献都是**非常感谢**的。
 
 
+
+
 ### 版本控制
 该项目使用Git进行版本管理。您可以在repository参看当前可用版本。
+
+
 
 
 ### 作者
@@ -132,9 +154,13 @@ Blog
 🐧632832232
 
 
+
+
 ### 项目参考以及鸣谢
 - [Netty服务器搭建](https://github.com/194295git/yan)
 - 本项目中参考开源社区的各位前辈的解决方案以及代码实现
+
+
 
 
 ### 项目已知问题
@@ -154,8 +180,13 @@ Blog
 6. 单聊和群聊未支持图片发送
 
 
+
+
 ### Blog-Vue3前端项目
 <a href="https://github.com/Cookici/blog-vue/tree/main">Blog-Vue3</a>
+
+
+
 
 ### 项目展示
 <img src="./img/1.png">
@@ -168,6 +199,8 @@ Blog
 <img src="./img/8.png">
 <img src="./img/9.png">
 <img src="./img/10.png">
+<img src="./img/11.png">
+<img src="./img/12.png">
 
 <!-- links -->
 
