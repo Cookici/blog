@@ -156,6 +156,7 @@ Blog
 
 ### 项目参考以及鸣谢
 - [Netty服务器搭建](https://github.com/194295git/yan)
+- [数据库表设计](https://zhangjia.io/852.html)
 - 本项目中参考开源社区的各位前辈的解决方案以及代码实现
 
 <br /><br />
