@@ -13,7 +13,7 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 
 <p align="center">
   <a href="https://github.com/Cookici/blog/">
-    <img src="./img/logo.jpg" alt="Logo" width="80" height="80">
+    <img src="https://github.com/Cookici/blog/tree/main/img/logo.png" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Blog</h3>
@@ -124,8 +124,9 @@ Blog
 - SpringCloudAlibaba 2021.0.1.0  具体可见:<a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E#%E7%BB%84%E4%BB%B6%E7%89%88%E6%9C%AC%E5%85%B3%E7%B3%BB">版本对应</a>
 - MySQL 8.0.30
 - Redis 7.0.0
+- RabbitMQ 
 - Elasticsearch 7.15.2
-- MyBatis-Plus
+- MyBatis-Plus 3.4.0
 
 <br /><br />
 
@@ -188,18 +189,17 @@ Blog
 <br /><br />
 
 ### 项目展示
-<img src="./img/1.png">
-<img src="./img/2.png">
-<img src="./img/3.png">
-<img src="./img/4.png">
-<img src="./img/5.png">
-<img src="./img/6.png">
-<img src="./img/7.png">
-<img src="./img/8.png">
-<img src="./img/9.png">
-<img src="./img/10.png">
-<img src="./img/11.png">
-<img src="./img/12.png">
+![image](https://github.com/Cookici/blog/tree/main/img/1.png)
+![image](https://github.com/Cookici/blog/tree/main/img/2.png)
+![image](https://github.com/Cookici/blog/tree/main/img/3.png)
+![image](https://github.com/Cookici/blog/tree/main/img/4.png)
+![image](https://github.com/Cookici/blog/tree/main/img/5.png)
+![image](https://github.com/Cookici/blog/tree/main/img/6.png)
+![image](https://github.com/Cookici/blog/tree/main/img/7.png)
+![image](https://github.com/Cookici/blog/tree/main/img/8.png)
+![image](https://github.com/Cookici/blog/tree/main/img/9.png)
+![image](https://github.com/Cookici/blog/tree/main/img/10.png)
+![image](https://github.com/Cookici/blog/tree/main/img/11.png)
 
 <!-- links -->
 
