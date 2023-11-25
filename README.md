@@ -13,7 +13,7 @@ Blog系统后端，一个简单的博客系统后端。有文章管理，单聊�
 
 <p align="center">
   <a href="https://github.com/Cookici/blog/">
-    <img src="https://github.com/Cookici/blog/tree/main/img/logo.png" alt="Logo" width="80" height="80">
+    <img src="./img/logo.jpg" alt="Logo" width="80" height="80">
   </a>
 
 <h3 align="center">Blog</h3>
@@ -189,17 +189,18 @@ Blog
 <br /><br />
 
 ### 项目展示
-![image](https://github.com/Cookici/blog/tree/main/img/1.png)
-![image](https://github.com/Cookici/blog/tree/main/img/2.png)
-![image](https://github.com/Cookici/blog/tree/main/img/3.png)
-![image](https://github.com/Cookici/blog/tree/main/img/4.png)
-![image](https://github.com/Cookici/blog/tree/main/img/5.png)
-![image](https://github.com/Cookici/blog/tree/main/img/6.png)
-![image](https://github.com/Cookici/blog/tree/main/img/7.png)
-![image](https://github.com/Cookici/blog/tree/main/img/8.png)
-![image](https://github.com/Cookici/blog/tree/main/img/9.png)
-![image](https://github.com/Cookici/blog/tree/main/img/10.png)
-![image](https://github.com/Cookici/blog/tree/main/img/11.png)
+<img src="./img/1.png">
+<img src="./img/2.png">
+<img src="./img/3.png">
+<img src="./img/4.png">
+<img src="./img/5.png">
+<img src="./img/6.png">
+<img src="./img/7.png">
+<img src="./img/8.png">
+<img src="./img/9.png">
+<img src="./img/10.png">
+<img src="./img/11.png">
+<img src="./img/11.png">
 
 <!-- links -->
 
