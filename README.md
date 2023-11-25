@@ -124,7 +124,7 @@ Blog
 - SpringCloudAlibaba 2021.0.1.0  具体可见:<a href="https://github.com/alibaba/spring-cloud-alibaba/wiki/%E7%89%88%E6%9C%AC%E8%AF%B4%E6%98%8E#%E7%BB%84%E4%BB%B6%E7%89%88%E6%9C%AC%E5%85%B3%E7%B3%BB">版本对应</a>
 - MySQL 8.0.30
 - Redis 7.0.0
-- RabbitMQ 
+- RabbitMQ 3.12.1
 - Elasticsearch 7.15.2
 - MyBatis-Plus 3.4.0
 
